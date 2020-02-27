@@ -5,15 +5,15 @@ import random
 
 # For settlements, cities
 class node:
-    def __init__(self, nearby):
+    def __init__(self, nearby, leftEdge, centerEdge, rightEdge):
         #dictionary of resources and attached rolls?
         self.resources = nearby
         #leftward edge?
-        self.left = None
+        self.left = leftEdge
         #rightward edge
-        self.right = None
+        self.right = rightEdge
         #could be going up or down
-        self.center = None
+        self.center = centerEdge
 
 #edge class for roads
 class edge:
@@ -29,7 +29,7 @@ class tile:
         self.resource = resource
         self.value = value
         self.players = []
-    
+
     def distribute(roll_value):
         if this.value == roll_value:
             for person in players:
@@ -43,8 +43,8 @@ class tile:
                     person.grainCount += 1
                 elif self.resource == "Brick":
                     person.brickCount += 1
-            
-# Only if a data structure is needed to store tiles/ nodes + edges        
+
+# Only if a data structure is needed to store tiles/ nodes + edges
 class board:
     def __init__(self, dataval = None):
         self.layout = []
@@ -62,7 +62,7 @@ class player:
         self.cityCount = 0
         self.longestRoad = 0
         self.points = 0
-        
+
     def build_set():
         self.lumberCount -= 1
         self.brickCount -= 1
@@ -70,22 +70,22 @@ class player:
         self.grainCount -= 1
         self.setCount += 1
         self.points += 1
-    
+
     def build_road():
         self.lumberCount -= 1
         self.brickCount -= 1
-        
+
     def build_city():
         self.oreCount -= 3
         self.grainCount -= 2
         self.points += 1
-        
-        
+
+
 def dice_roll():
     roll = random.randint(1,6) + random.randint(1,6)
     for hexagon in basic.layout:
         hexagon.distribute(roll)
-        
+
 def setup():
     basic = board()
     tile1 = tile("Lumber", 11)
