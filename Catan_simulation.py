@@ -5,7 +5,7 @@ import random
 
 # For settlements, cities
 class node:
-    def __init__(self, nearby, leftEdge, centerEdge, rightEdge, x, y):
+    def __init__(self, nearby, leftEdge, centerEdge, rightEdge, rowNum, columnNum):
         #dictionary of resources and attached rolls?
         self.resources = nearby
         #leftward edge?
@@ -14,9 +14,8 @@ class node:
         self.right = rightEdge
         #could be going up or down
         self.center = centerEdge
-        self.row = x
-        self.column = y
-
+        self.row = rowNum
+        self.column = columnNum
 
 #edge class for roads
 class edge:
