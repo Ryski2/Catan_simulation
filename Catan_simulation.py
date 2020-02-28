@@ -3,6 +3,9 @@
 
 import random
 
+game_board = []
+players = []
+
 # For settlements, cities
 class node:
     def __init__(self, nearby):
@@ -79,15 +82,38 @@ class player:
         self.oreCount -= 3
         self.grainCount -= 2
         self.points += 1
-        
+
+    def total_resources():
+        return self.lumberCount + self.woolCount + self.oreCount + self.grainCount + self.brickCount
+    
+    def discard_half():
+        discards = player.total_resources() // 2
+            for i in range(0, discards):
+                resource = random.randint(1,5)
+                if resource == 1:
+                    lumberCount -= 1
+                elif resource == 2:
+                    woolCount -= 1
+                elif resource == 3:
+                    oreCount -= 1
+                elif resouce == 4:
+                    grainCount -= 1
+                else:
+                    brickCount -= 1
         
 def dice_roll():
     roll = random.randint(1,6) + random.randint(1,6)
-    for hexagon in basic.layout:
-        hexagon.distribute(roll)
+    if roll == 7:
+        for player in players:
+            if player.total_resources() > 7:
+                player.discard_half()
+
+    else:
+        for hexagon in basic.layout:
+            hexagon.distribute(roll)
         
 def setup():
-    basic = board()
+    game_board = board()
     tile1 = tile("Lumber", 11)
     tile2 = tile("Wool", 12)
     tile3 = tile("Grain", 9)
@@ -113,5 +139,28 @@ def setup():
     player2 = player(2)
     player3 = player(3)
     player4 = player(4)
+    player = [player1, player2, player3, player4]
 
+#each player rolls dice and acquires resources/places settlements
+def game_round():
+    for player in players:
+        dice_roll()
+        #if possible, build
+        #check if anyone is winning
+    
+def first_turn():
+    for player in players:
+        #place settlement and road
+        pass
+    for player in reversed(players):
+        #place settlement and road
+        pass
+
+def __main__():
+    #place initial settlements and roads
+    first_turn()
+    #loop through turns in the game
+    for i in range(0, 200):
+        game_turn()
+    #end when one player has score of 10 (implement limit to number of turns if simulation takes too long)
 
