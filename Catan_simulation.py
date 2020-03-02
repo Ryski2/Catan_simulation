@@ -28,10 +28,10 @@ class edge:
         self.node1 = None
         self.node2 = None
 
-    def build_road(playerid):
+    def build_road(self, playerid):
         self.player = playerid
 
-    def add_nodes(start, end):
+    def add_nodes(self, start, end):
         self.node1 = start
         self.node2 = end
     #possibly add a method to include node location in the edge?
@@ -39,13 +39,13 @@ class edge:
 
 #possibly temporary, seems useful for quickly assigning resources
 class tile:
-    def __init__(self,resource, value):
+    def __init__(self, resource, value):
         self.resource = resource
         self.value = value
         self.players = []
 
-    def distribute(roll_value):
-        if this.value == roll_value:
+    def distribute(self, roll_value):
+        if self.value == roll_value:
             for person in players:
                 if self.resource == "Lumber":
                     person.lumberCount += 1
@@ -78,7 +78,7 @@ class player:
         self.points = 0
         self.locations = []
 
-    def build_set():
+    def build_set(self):
         self.lumberCount -= 1
         self.brickCount -= 1
         self.woolCount -= 1
@@ -86,32 +86,33 @@ class player:
         self.setCount += 1
         self.points += 1
 
-    def build_road():
+    def build_road(self):
         self.lumberCount -= 1
         self.brickCount -= 1
 
-    def build_city():
+    def build_city(self):
         self.oreCount -= 3
         self.grainCount -= 2
         self.points += 1
 
-    def total_resources():
+    def total_resources(self):
         return self.lumberCount + self.woolCount + self.oreCount + self.grainCount + self.brickCount
 
-    def discard_half():
+    # TODO: ensure not negative resources
+    def discard_half(self):
         discards = player.total_resources() // 2
-            for i in range(0, discards):
-                resource = random.randint(1,5)
-                if resource == 1:
-                    lumberCount -= 1
-                elif resource == 2:
-                    woolCount -= 1
-                elif resource == 3:
-                    oreCount -= 1
-                elif resouce == 4:
-                    grainCount -= 1
-                else:
-                    brickCount -= 1
+        for i in range(discards):
+            resource = random.randint(1,5)
+            if resource == 1:
+                lumberCount -= 1
+            elif resource == 2:
+                woolCount -= 1
+            elif resource == 3:
+                oreCount -= 1
+            elif resource == 4:
+                grainCount -= 1
+            else:
+                brickCount -= 1
 
 def setup():
     game_board = board()
@@ -125,22 +126,22 @@ def setup():
     tile8 = tile("Desert", 7)
     tile9 = tile("Lumber", 3)
     tile10 = tile("Grain", 11)
-    tile12 = tile("Lumber", 4)
-    tile13 = tile("Grain", 8)
-    tile14 = tile("Brick", 8)
-    tile15 = tile("Wool", 10)
-    tile16 = tile("Wool", 9)
-    tile17 = tile("Ore", 3)
-    tile18 = tile("Ore", 5)
-    tile19 = tile("Grain", 2)
-    tile20 = tile("Lumber", 6)
-    order = [tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13, tile14, tile15, tile16, tile17, tile18, tile19, tile20]
+    tile11 = tile("Lumber", 4)
+    tile12 = tile("Grain", 8)
+    tile13 = tile("Brick", 8)
+    tile14 = tile("Wool", 10)
+    tile15 = tile("Wool", 9)
+    tile16 = tile("Ore", 3)
+    tile17 = tile("Ore", 5)
+    tile18 = tile("Grain", 2)
+    tile19 = tile("Lumber", 6)
+    order = [tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13, tile14, tile15, tile16, tile17, tile18, tile19]
     basic.layout = order
     player1 = player(1)
     player2 = player(2)
     player3 = player(3)
     player4 = player(4)
-    player = [player1, player2, player3, player4]
+    players = [player1, player2, player3, player4]
 
     # Create a list for storing edges. Edge location shown in basic_layout.png
     edges = [edge() for i in range(72)]
