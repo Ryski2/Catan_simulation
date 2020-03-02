@@ -5,20 +5,26 @@ import random
 
 game_board = []
 players = []
+nodes = []
+edges = []
 
 # For settlements, cities
 class node:
-    def __init__(self, nearby, leftEdge, centerEdge, rightEdge, rowNum, columnNum):
+    def __init__(self, nearby, edges, rowNum, columnNum, player=None):
         #dictionary of resources and attached rolls?
         self.resources = nearby
-        #leftward edge?
-        self.left = leftEdge
-        #rightward edge
-        self.right = rightEdge
-        #could be going up or down
-        self.center = centerEdge
+
+        #edges convention: 0th index is left, 1st index is center, 2nd index is right
+        self.edges = []
+        
         self.row = rowNum
         self.column = columnNum
+        self.player = player
+        #0 for empty, 1 for settlement, 2 for city
+        self.type = 0
+
+    def get_coords():
+        return "(" + str(self.row) + ", " + str(self.column) + ")"
 
 #edge class for roads
 class edge:
@@ -73,7 +79,12 @@ class player:
         self.setCount = 0
         self.cityCount = 0
         self.longestRoad = 0
-        self.points = 0
+
+    def points():
+        return self.setCount + self.cityCount * 2 + self.longestRoad
+
+    def can_build_set():
+        return self.lumberCount >= 1 and self.brickCount >= 1 and self.woolCount >= 1 and self.grainCount >= 1
 
     def build_set():
         self.lumberCount -= 1
@@ -81,16 +92,22 @@ class player:
         self.woolCount -= 1
         self.grainCount -= 1
         self.setCount += 1
-        self.points += 1
 
+    def can_build_road():
+        return self.lumberCount >= 1 and self.brickCont >= 1
+    
     def build_road():
         self.lumberCount -= 1
         self.brickCount -= 1
 
+    def can_build_city():
+        return self.oreCount >= 3 and self.grainCount >= 2 and self.setCount >= 1
+        
     def build_city():
         self.oreCount -= 3
         self.grainCount -= 2
-        self.points += 1
+        self.setCount -= 1
+        self.cityCount += 1
 
     def total_resources():
         return self.lumberCount + self.woolCount + self.oreCount + self.grainCount + self.brickCount
@@ -199,26 +216,76 @@ def dice_roll():
         for player in players:
             if player.total_resources() > 7:
                 player.discard_half()
-
     else:
         for hexagon in basic.layout:
             hexagon.distribute(roll)
-        
+
+def find_node_with_settlement(player):
+    #TODO
+    return None
+
 	
 #each player rolls dice and acquires resources/places settlements
-def game_round():
+def game_turn():
     for player in players:
         dice_roll()
         #if possible, build
+        
+        if player.can_build_city():
+            #pick location to build
+            settlement = find_node_with_settlement(player)
+            player.build_city()
+            settlement.type = 2
+        if player.can_build_settlement():
+            #need to check multiple conditions:
+            #   1. adjacent to a road
+            #   2. distance of at least 2 away from any settlement
+            #   3. current node is empty (this is first thing to be done)
+            pass
+        if player.can_build_road():
+            #check if connected to settlement or other road
+            pass
+
         #check if anyone is winning
-    
+
+def get_random_empty_node()
+    rand_nodes = random.sample(nodes, len(nodes))
+    for node in rand_nodes:
+        if (node.player == None):
+            return node
+
+def get_random_empty_edge(node):
+    rand_edges = random.sample(node.edges, len(node.edges))
+    for edge in rand_edges:
+        if edge.player is None:
+            return edge
+
+def place_settlement_and_road(player):
+    #first two settlements and roads are free, don't subtract from resources
+    #create a new list that contains all the nodes randomized (we don't actually randomize the original list here)
+    #loop through the list until you find one that's empty
+
+    found_node_edge = False
+        while (!found_node_edge):
+            node = get_random_empty_node()
+            if node is None:
+                raise ValueException("No empty nodes found -- this shouldn't happen in the first round so if you're seeing this the code's wrong")
+            edge = get_random_empty_edge()
+            #note: a node could be empty but all surrounding edges could be taken (this probably will never happen in a real game)
+            if edge is not None:
+                node.player = player.ID
+                edge.player = player.ID
+                print("Player " + str(player.ID) + " built a settlement at coordinates" +\
+                              node.get_coords() + ", and a road to " +\
+                              #make sure we're giving the coordinates to the other node, not the node where the settlement is
+                              (edge.node1.get_coords() if edge.node2 is node else edge.node2.get_coords()))
+
 def first_turn():
     for player in players:
-        #place settlement and road
-        pass
+        place_settlement_and_road(player)    
+        
     for player in reversed(players):
-        #place settlement and road
-        pass
+        place_settlement_and_road(player)
 
 def __main__():
     #place initial settlements and roads
