@@ -34,6 +34,8 @@ class edge:
     def add_nodes(start, end):
         self.node1 = start
         self.node2 = end
+    #possibly add a method to include node location in the edge?
+    #should be able to extract it from self.node1.row and self.node1.column
 
 #possibly temporary, seems useful for quickly assigning resources
 class tile:
@@ -74,6 +76,7 @@ class player:
         self.cityCount = 0
         self.longestRoad = 0
         self.points = 0
+        self.locations = []
 
     def build_set():
         self.lumberCount -= 1
@@ -94,7 +97,7 @@ class player:
 
     def total_resources():
         return self.lumberCount + self.woolCount + self.oreCount + self.grainCount + self.brickCount
-    
+
     def discard_half():
         discards = player.total_resources() // 2
             for i in range(0, discards):
@@ -109,7 +112,7 @@ class player:
                     grainCount -= 1
                 else:
                     brickCount -= 1
-        
+
 def setup():
     game_board = board()
     tile1 = tile("Lumber", 11)
@@ -138,60 +141,136 @@ def setup():
     player3 = player(3)
     player4 = player(4)
     player = [player1, player2, player3, player4]
-    edgeArray = [edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edge10, edge11, edge12, edge13, edge14, edge15, edge16]
-    node_1_2 = node({11 : "Lumber"}, None, edge0, edge1, 1, 2)
-    node_0_3 = node({11 : "Lumber"}, edge1, None, edge2, 0, 3)
-    node_1_4 = node({11 : "Lumber", 12: "Wool"}, edge2, edge3, edge4, 1,4)
-    node_0_5 = node({12 : "Wool"}, edge4, None, edge5, 0,5)
-    node_1_6 = node({12 : "Wool", 9 : "Grain"}, edge5, edge6, edge7, 1,6)
-    node_0_7 = node({9 : "Grain"}, edge7, None, edge8, 0,7)
-    node_1_8 = node({9 : "Grain"}, edge8, edge9, None, 1, 8)
-    node_2_8 = node({9 : "Grain", 10 : "Wool"}, edge10, edge9, edge34,2,8)
-    node_3_7 = node({9 : "Grain", 10 : "Wool", 5 : "Brick"},edge12,edge11, edge10,3,7)
-    node_2_6 = node({12: "Wool", 9 : "Grain", 5 : "Brick"},edge13, edge6,edge12,2,6)
-    node_3_5 = node({6 : "Ore", 12 : "Wool", 5 : "Brick"},edge15,edge14,edge14,3,5)
-    node_2_4 = node({11 : "Lumber", 12: "Wool", 6 : "Ore"},edge16, edge3,edge15,2,4)
-    node_3_3 = node({6 : "Ore", 11 : "Lumber", 4 : "Brick"},edge18,edge17,edge16,3,3)
-    node_2_2 = node({4 : "Brick", 11 : "Lumber"},edge19,edge0,edge18,2,2)
-    node_3_1 = node({4 : "Brick"},None,edge20,edge19,3,1)
-    node_4_1 = node({4 : "Brick", 7 : "Desert"},edge52,edge20,edge21,4,1)
-    node_5_2 = node({7 : "Desert", 4 : "Brick", 3 : "Lumber"},edge21,edge22,edge23,5,2)
-    node_4_3 = node({4 : "Brick", 3 : "Lumber", 6 : "Ore"},edge23,edge17,edge24,4,3)
-    node_5_4 = node({3 : "Lumber", 6  : "Ore", 11 : "Grain"},edge24,edge25,edge26,5,4)
-    node_4_5 = node({6 : "Ore", 11 : "Grain", 5 : "Brick"},edge26,edge14,edge27,4,5)
-    node_5_6 = node({11 : "Grain", 4 : "Lumber", 5 : "Brick"},edge27,edge28,edge29,5,6)
-    node_4_7 = node({4 : "Lumber", 10 : "Wool", 5 : "Brick"},edge29,edge11,edge30,4,7)
-    node_5_8 = node({4 : "Lumber", 10 : "Wool", 8 : "Grain"},edge30,edge31,edge32,5,8)
-    node_4_9 = node({10 : "Wool", 8 : "Grain"},edge32,edge33,edge34,4,9)
-    node_5_10 = node({8 : "Grain"},edge35,None,edge36,5,10)
-    node_6_10 = node({8 : "Grain"},edge37,edge36,None,6,10)
-    node_7_9 = node({8 : "Grain", 3 : "Ore"}, edge39,edge38,edge37,7,9)
-    node_6_8 = node({8 : "Grain", 4 : "Lumber", 3 : "Ore"}, edge40, edge31,edge39,6,8)
-    node_7_7 = node({9 : "Wool", 4 : "Lumber", 3 : "Ore"},edge42, edge41,edge40,7,7)
-    node_6_6 = node({11 : "Grain", 9 : "Wool", 4 : "Lumber"},edge43, edge28, edge42,6,6)
-    node_7_5 = node({11 : "Grain", 9 : "Wool", 10 : "Wool"},edge45,edge44,edge43,7,5)
-    node_6_4 = node({11 : "Grain", 10 : "Wool", 3 : "Lumber"},edge46,edge25,edge45,6,4)
-    node_7_3 = node({8 : "Brick", 10 : "Wool", 3 : "Lumber"},edge48,edge47,edge46,7,3)
-    node_6_2 = node({8 : "Brick", 7 : "Desert", 3 : "Lumber"},edge49,edge22,edge48,6,2)
-    node_7_1 = node({8 : "Brick", 7 : "Desert"},edge50,edge53,edge49,7,1)
-    node_6_0 = node({7 : "Desert"}, None,edge51,edge50,6,0)
-    node_5_0 = node({7 : "Desert"}, None,edge51,edge52,5,0)
-    node_8_1 = node({8 : "Brick"}, None, edge53,edge54,8,1)
-    node_9_2 = node({8 : "Brick", 5 : "Ore"},edge54,edge55,edge56,9,2)
-    node_8_3 = node({8 : "Brick", 5 : "Ore", 10 : "Wool"},edge56,edge47,edge57,8,3)
-    node_9_4 = node({2 : "Grain", 5 : "Ore", 10 : "Wool"},edge57,edge58,edge59,9,4)
-    node_8_5 = node({2 : "Grain", 9 : "Wool", 10 : "Wool"},edge59,edge44,edge60,8,5)
-    node_9_6 = node({2 : "Grain", 6 : "Lumber", 9 : "Wool"},edge60,edge61,edge62,9,6)
-    node_8_7 = node({3 : "Ore", 6 : "Lumber", 9 : "Wool"}, edge62,edge41,edge63,8,7)
-    node_9_8 = node({3 : "Ore", 6 : "Lumber"},edge63,edge65,edge64,9,8)
-    node_8_9 = node({3 : "Ore"},edge64,edge38,None,8,9)
-    node_10_8 = node({6 : "Lumber"},edge66,edge65,None,10,8)
-    node_11_7 = node({6 : "Lumber"},edge67,None,edge66,11,7)
-    node_10_6 = node({2 : "Grain", 6 : "Lumber"}, edge68,edge61,edge67,10,6)
-    node_11_5 = node({2 : "Grain"},edge69,None,edge68,11,5)
-    node_10_4 = node({2 : "Grain", 5 : "Ore"},edge70,edge58,edge69,10,4)
-    node_11_3 = node({5 : "Ore"},edge71,None,edge70,11,3)
-    node_10_2 = node({5 : "Ore"},None,edge55,edge71,10,2)
+
+    # Create a list for storing edges. Edge location shown in basic_layout.png
+    edges = [edge() for i in range(72)]
+    node_1_2 = node({11 : "Lumber"}, None, edges[0], edges[1], 1, 2)
+    node_0_3 = node({11 : "Lumber"}, edges[1], None, edges[2], 0, 3)
+    node_1_4 = node({11 : "Lumber", 12: "Wool"}, edges[2], edges[3], edges[4], 1,4)
+    node_0_5 = node({12 : "Wool"}, edges[4], None, edges[5], 0,5)
+    node_1_6 = node({12 : "Wool", 9 : "Grain"}, edges[5], edges[6], edges[7], 1,6)
+    node_0_7 = node({9 : "Grain"}, edges[7], None, edges[8], 0,7)
+    node_1_8 = node({9 : "Grain"}, edges[8], edges[9], None, 1, 8)
+    node_2_8 = node({9 : "Grain", 10 : "Wool"}, edges[20], edges[9], edges[21],2,8)
+    node_3_7 = node({9 : "Grain", 10 : "Wool", 5 : "Brick"},edges[18],edges[19], edges[20],3,7)
+    node_2_6 = node({12: "Wool", 9 : "Grain", 5 : "Brick"},edges[16], edges[6],edges[18],2,6)
+    node_3_5 = node({6 : "Ore", 12 : "Wool", 5 : "Brick"},edges[15],edges[16],edges[17],3,5)
+    node_2_4 = node({11 : "Lumber", 12: "Wool", 6 : "Ore"},edges[14], edges[3],edges[15],2,4)
+    node_3_3 = node({6 : "Ore", 11 : "Lumber", 4 : "Brick"},edges[12],edges[13],edges[14],3,3)
+    node_2_2 = node({4 : "Brick", 11 : "Lumber"},edges[11],edges[0],edges[12],2,2)
+    node_3_1 = node({4 : "Brick"},None,edges[10],edges[11],3,1)
+    node_4_1 = node({4 : "Brick", 7 : "Desert"},edges[24],edges[10],edges[25],4,1)
+    node_5_2 = node({7 : "Desert", 4 : "Brick", 3 : "Lumber"},edges[25],edges[26],edges[27],5,2)
+    node_4_3 = node({4 : "Brick", 3 : "Lumber", 6 : "Ore"},edges[27],edges[13],edges[28],4,3)
+    node_5_4 = node({3 : "Lumber", 6  : "Ore", 11 : "Grain"},edges[28],edges[29],edges[30],5,4)
+    node_4_5 = node({6 : "Ore", 11 : "Grain", 5 : "Brick"},edges[30],edges[16],edges[31],4,5)
+    node_5_6 = node({11 : "Grain", 4 : "Lumber", 5 : "Brick"},edges[31],edges[32],edges[33],5,6)
+    node_4_7 = node({4 : "Lumber", 10 : "Wool", 5 : "Brick"},edges[33],edges[19],edges[34],4,7)
+    node_5_8 = node({4 : "Lumber", 10 : "Wool", 8 : "Grain"},edges[34],edges[35],edges[36],5,8)
+    node_4_9 = node({10 : "Wool", 8 : "Grain"},edges[36],edges[22],edges[37],4,9)
+    node_5_10 = node({8 : "Grain"},edges[37],edges[38],None,5,10)
+    node_6_10 = node({8 : "Grain"},edges[53],edges[38],None,6,10)
+    node_7_9 = node({8 : "Grain", 3 : "Ore"}, edges[51],edges[52],edges[53],7,9)
+    node_6_8 = node({8 : "Grain", 4 : "Lumber", 3 : "Ore"}, edges[50], edges[35],edges[51],6,8)
+    node_7_7 = node({9 : "Wool", 4 : "Lumber", 3 : "Ore"},edges[48], edges[49],edges[50],7,7)
+    node_6_6 = node({11 : "Grain", 9 : "Wool", 4 : "Lumber"},edges[47], edges[32], edges[48],6,6)
+    node_7_5 = node({11 : "Grain", 9 : "Wool", 10 : "Wool"},edges[45],edges[46],edges[47],7,5)
+    node_6_4 = node({11 : "Grain", 10 : "Wool", 3 : "Lumber"},edges[44],edges[29],edges[45],6,4)
+    node_7_3 = node({8 : "Brick", 10 : "Wool", 3 : "Lumber"},edges[42],edges[43],edges[44],7,3)
+    node_6_2 = node({8 : "Brick", 7 : "Desert", 3 : "Lumber"},edges[41],edges[26],edges[42],6,2)
+    node_7_1 = node({8 : "Brick", 7 : "Desert"},edges[39],edges[40],edges[41],7,1)
+    node_6_0 = node({7 : "Desert"}, None,edges[23],edges[39],6,0)
+    node_5_0 = node({7 : "Desert"}, None,edges[23],edges[24],5,0)
+    node_8_1 = node({8 : "Brick"}, None, edges[40],edges[54],8,1)
+    node_9_2 = node({8 : "Brick", 5 : "Ore"},edges[54],edges[55],edges[56],9,2)
+    node_8_3 = node({8 : "Brick", 5 : "Ore", 10 : "Wool"},edges[56],edges[43],edges[57],8,3)
+    node_9_4 = node({2 : "Grain", 5 : "Ore", 10 : "Wool"},edges[57],edges[58],edges[59],9,4)
+    node_8_5 = node({2 : "Grain", 9 : "Wool", 10 : "Wool"},edges[59],edges[46],edges[60],8,5)
+    node_9_6 = node({2 : "Grain", 6 : "Lumber", 9 : "Wool"},edges[60],edges[61],edges[62],9,6)
+    node_8_7 = node({3 : "Ore", 6 : "Lumber", 9 : "Wool"}, edges[62],edges[49],edges[63],8,7)
+    node_9_8 = node({3 : "Ore", 6 : "Lumber"},edges[63],edges[65],edges[64],9,8)
+    node_8_9 = node({3 : "Ore"},edges[65],edges[52],None,8,9)
+    node_10_8 = node({6 : "Lumber"},edges[71],edges[64],None,10,8)
+    node_11_7 = node({6 : "Lumber"},edges[70],None,edges[71],11,7)
+    node_10_6 = node({2 : "Grain", 6 : "Lumber"}, edges[69],edges[61],edges[70],10,6)
+    node_11_5 = node({2 : "Grain"},edges[68],None,edges[69],11,5)
+    node_10_4 = node({2 : "Grain", 5 : "Ore"},edges[67],edges[58],edges[68],10,4)
+    node_11_3 = node({5 : "Ore"},edges[66],None,edges[67],11,3)
+    node_10_2 = node({5 : "Ore"},None,edges[55],edges[66],10,2)
+
+    #adding the nodes each edge connects, generated by a different script.
+    edges[0].add_nodes(node_2_2, node_1_2)
+    edges[1].add_nodes(node_1_2, node_0_3)
+    edges[2].add_nodes(node_0_3, node_1_4)
+    edges[3].add_nodes(node_1_4, node_2_4)
+    edges[4].add_nodes(node_1_4, node_0_5)
+    edges[5].add_nodes(node_0_5, node_1_6)
+    edges[6].add_nodes(node_1_6, node_2_6)
+    edges[7].add_nodes(node_1_6, node_0_7)
+    edges[8].add_nodes(node_0_7, node_1_8)
+    edges[9].add_nodes(node_1_8, node_2_8)
+    edges[10].add_nodes(node_3_1, node_4_1)
+    edges[11].add_nodes(node_3_1, node_2_2)
+    edges[12].add_nodes(node_2_2, node_3_3)
+    edges[13].add_nodes(node_3_3, node_4_3)
+    edges[14].add_nodes(node_3_3, node_2_4)
+    edges[15].add_nodes(node_2_4, node_3_5)
+    edges[16].add_nodes(node_3_5, node_4_5)
+    edges[17].add_nodes(node_3_5, node_2_6)
+    edges[18].add_nodes(node_2_6, node_3_7)
+    edges[19].add_nodes(node_3_7, node_4_7)
+    edges[20].add_nodes(node_3_7, node_2_8)
+    edges[21].add_nodes(node_2_8, node_3_9)
+    edges[22].add_nodes(node_3_9, node_4_9)
+    edges[23].add_nodes(node_5_0, node_6_0)
+    edges[24].add_nodes(node_5_0, node_4_1)
+    edges[25].add_nodes(node_4_1, node_5_2)
+    edges[26].add_nodes(node_5_2, node_6_2)
+    edges[27].add_nodes(node_5_2, node_4_3)
+    edges[28].add_nodes(node_4_3, node_5_4)
+    edges[29].add_nodes(node_5_4, node_6_4)
+    edges[30].add_nodes(node_5_4, node_4_5)
+    edges[31].add_nodes(node_4_5, node_5_6)
+    edges[32].add_nodes(node_5_6, node_6_6)
+    edges[33].add_nodes(node_5_6, node_4_7)
+    edges[34].add_nodes(node_4_7, node_5_8)
+    edges[35].add_nodes(node_5_8, node_6_8)
+    edges[36].add_nodes(node_5_8, node_4_9)
+    edges[37].add_nodes(node_4_9, node_5_10)
+    edges[38].add_nodes(node_5_10, node_6_10)
+    edges[39].add_nodes(node_6_0, node_7_1)
+    edges[40].add_nodes(node_7_1, node_8_1)
+    edges[41].add_nodes(node_7_1, node_6_2)
+    edges[42].add_nodes(node_6_2, node_7_3)
+    edges[43].add_nodes(node_7_3, node_8_3)
+    edges[44].add_nodes(node_7_3, node_6_4)
+    edges[45].add_nodes(node_6_4, node_7_5)
+    edges[46].add_nodes(node_7_5, node_8_5)
+    edges[47].add_nodes(node_7_5, node_6_6)
+    edges[48].add_nodes(node_6_6, node_7_7)
+    edges[49].add_nodes(node_7_7, node_8_7)
+    edges[50].add_nodes(node_7_7, node_6_8)
+    edges[51].add_nodes(node_6_8, node_7_9)
+    edges[52].add_nodes(node_7_9, node_8_9)
+    edges[53].add_nodes(node_7_9, node_6_10)
+    edges[54].add_nodes(node_8_1, node_9_2)
+    edges[55].add_nodes(node_9_2, node_10_2)
+    edges[56].add_nodes(node_9_2, node_8_3)
+    edges[57].add_nodes(node_8_3, node_9_4)
+    edges[58].add_nodes(node_9_4, node_10_4)
+    edges[59].add_nodes(node_9_4, node_8_5)
+    edges[60].add_nodes(node_8_5, node_9_6)
+    edges[61].add_nodes(node_9_6, node_10_6)
+    edges[62].add_nodes(node_9_6, node_8_7)
+    edges[63].add_nodes(node_8_7, node_9_8)
+    edges[64].add_nodes(node_9_8, node_10_8)
+    edges[65].add_nodes(node_9_8, node_8_9)
+    edges[66].add_nodes(node_10_2, node_11_3)
+    edges[67].add_nodes(node_11_3, node_10_4)
+    edges[68].add_nodes(node_10_4, node_11_5)
+    edges[69].add_nodes(node_11_5, node_10_6)
+    edges[70].add_nodes(node_10_6, node_11_7)
+    edges[71].add_nodes(node_11_7, node_10_8)
 
 def dice_roll():
     roll = random.randint(1,6) + random.randint(1,6)
@@ -203,15 +282,15 @@ def dice_roll():
     else:
         for hexagon in basic.layout:
             hexagon.distribute(roll)
-        
-	
+
+
 #each player rolls dice and acquires resources/places settlements
 def game_round():
     for player in players:
         dice_roll()
         #if possible, build
         #check if anyone is winning
-    
+
 def first_turn():
     for player in players:
         #place settlement and road
