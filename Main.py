@@ -3,4 +3,4 @@ from Simulation import *
 
 sim = Simulation()
 
-sim.first_turn()
+sim.run()

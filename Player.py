@@ -7,15 +7,15 @@ class Player:
         self.oreCount = 0
         self.grainCount = 0
         self.brickCount = 0
-        self.setCount = 0
+        self.settlementCount = 0
         self.cityCount = 0
         self.longestRoad = 0
         self.locations = []
 
     def points(self):
-        return self.setCount + self.cityCount * 2 + self.longestRoad
+        return self.settlementCount + self.cityCount * 2 + self.longestRoad
 
-    def can_build_set(self):
+    def can_build_settlement(self):
         return self.lumberCount >= 1 and self.brickCount >= 1 and self.woolCount >= 1 and self.grainCount >= 1
 
     def build_set(self):
@@ -23,7 +23,7 @@ class Player:
         self.brickCount -= 1
         self.woolCount -= 1
         self.grainCount -= 1
-        self.setCount += 1
+        self.settlementCount += 1
 
     def can_build_road(self):
         return self.lumberCount >= 1 and self.brickCont >= 1
@@ -33,12 +33,12 @@ class Player:
         self.brickCount -= 1
 
     def can_build_city(self):
-        return self.oreCount >= 3 and self.grainCount >= 2 and self.setCount >= 1
+        return self.oreCount >= 3 and self.grainCount >= 2 and self.settlementCount >= 1
         
     def build_city(self):
         self.oreCount -= 3
         self.grainCount -= 2
-        self.setCount -= 1
+        self.settlementCount -= 1
         self.cityCount += 1
 
     def total_resources(self):

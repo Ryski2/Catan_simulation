@@ -1,9 +1,34 @@
 from Board import Board
 import random
 
+max_turns = 3
+
 class Simulation:
     def __init__(self):
         self.board = Board()
+        
+    def run(self):
+        print()
+        print("Players placing initial settlements and roads")
+        print("---------------------------------------------")
+        print()
+        
+        self.first_turn()
+        
+        
+        
+        
+        print()
+        print("Moving on to main game section")
+        print("---------------------------------------------")
+        print()
+        
+        for i in range(0, max_turns):
+            print("Turn " + str(i + 1))
+            self.game_turn()
+            
+            
+        print("Game Ended")
             
     def get_random_empty_node(self):
         #taking random sample now stupid cause we don't loop through? maybe? idk
@@ -15,7 +40,7 @@ class Simulation:
     def get_random_empty_edge(self, node):
         rand_edges = random.sample(node.edges, len(node.edges))
         for edge in rand_edges:
-            if edge.player is None:
+            if edge is not None and edge.player is None:
                 return edge
                 
     def initial_settlement_road_placement(self, player):
@@ -33,6 +58,7 @@ class Simulation:
             if edge is not None:
                 found_node_edge = True
                 node.player = player.ID
+                #TODO: connect player with tile
                 edge.player = player.ID
                 print("Player " + str(player.ID) + " built a settlement at coordinates" +\
                               node.get_coords() + ", and a road to " +\
@@ -43,13 +69,15 @@ class Simulation:
         for player in self.board.players:
             self.initial_settlement_road_placement(player)    
             
+        #TODO: players get resources bordering settlement placed on this turn
         for player in reversed(self.board.players):
             self.initial_settlement_road_placement(player)
             
             #each player rolls dice and acquires resources/places settlements
-    def game_turn():
-        for player in players:
-            dice_roll()
+    def game_turn(self):
+        for player in self.board.players:
+            print("Player " + str(player.ID) + "'s Turn")
+            self.board.dice_roll()
             #if possible, build
             
             if player.can_build_city():
