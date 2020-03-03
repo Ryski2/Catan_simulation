@@ -18,9 +18,6 @@ class Simulation:
         
         self.first_turn()
         
-        
-        
-        
         print()
         print("Moving on to main game section")
         print("---------------------------------------------")
