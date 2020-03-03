@@ -12,15 +12,15 @@ class Board:
         
     def dice_roll(self):
         roll = random.randint(1,6) + random.randint(1,6)
-        print("\tRolled a " + str(roll))
+        print("\t\tRolled a " + str(roll))
         if roll == 7:
             for player in self.players:
                 resources = player.total_resources()
                 if resources > 7:
                     player.discard_half()
-                    print("\tPlayer " + str(player.id) + " had " + str(resources) + " resources and discarded " + str(resources - player.total_resources()))
+                    print("\t\t\tPlayer " + str(player.id) + " had " + str(resources) + " resources and now has " + str(player.total_resources()))
                 else:
-                    print("\tPlayer " + str(player.id) + " has " + str(resources) + " resouces. No cards are discarded")
+                    print("\t\t\tPlayer " + str(player.id) + " has " + str(resources) + " resouces. No cards are discarded")
         else:
             for tile in self.layout:
                 tile.distribute(roll)
@@ -209,6 +209,8 @@ class Tile:
         if self.value == roll_value:
             for node in self.nodes:
                 if node.type == BuildType.Settlement:
+                    print("\t\t\tPlayer " + str(node.player.id) + " got 1 of resource " + str(self.resource))
                     node.player.resources[self.resource] += 1
                 elif node.type == BuildType.City:
+                    print("\t\t\tPlayer " + str(node.player.id) + " got 2 of resource " + str(self.resource))
                     node.player.resources[self.resource] += 2

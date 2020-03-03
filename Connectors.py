@@ -28,6 +28,12 @@ class Edge:
 
     def build_road(self, player):
         self.player = player
+        
+    def get_other_node(self, node):
+        if self.node1 is not node:
+            return self.node1
+        else:
+            return self.node2
 
     def add_nodes(self, start, end):
         self.node1 = start
