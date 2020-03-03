@@ -15,7 +15,7 @@ class Player:
           Resource.Brick : 0
         }
         
-        self.settlementCount = 0
+        self.settlementCount = 2
         self.cityCount = 0
         self.longestRoad = 0
         self.locations = []

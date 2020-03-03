@@ -3,6 +3,7 @@ from Connectors import BuildType
 from Player import Resource
 import random
 
+
 max_turns = 200
 
 class Simulation:
@@ -37,7 +38,7 @@ class Simulation:
         print("---------------------------------------------")
         print("Game Ended")
         
-        #TODO: print board state out somehow
+        
         for player in self.board.players:
             #print every players settlements, roads, and cities
             print("Player " + str(player.id) + ": ")
@@ -182,6 +183,7 @@ class Simulation:
                     player.build_city()
                     city_node.type = BuildType.City
                     print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
+                    
             if player.can_build_settlement():
                 settlement_node = self.find_valid_settlement_location(player)
                 if settlement_node is None:
@@ -190,7 +192,8 @@ class Simulation:
                     settlement_node.player = player
                     settlement_node.type = BuildType.Settlement
                     player.build_settlement()
-                    print("\t\tPlayer " + str(player.id) + " built a settlement at " + settlement_node.get_coords())                                
+                    print("\t\tPlayer " + str(player.id) + " built a settlement at " + settlement_node.get_coords())               
+                    
             if player.can_build_road():
                 road_edge = self.find_valid_road_location(player)
                 if road_edge is None:
