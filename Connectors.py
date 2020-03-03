@@ -2,16 +2,16 @@ from enum import Enum
 
 # For settlements, cities
 class Node:
-    def __init__(self, nearby, edges, rowNum, columnNum, player=None):
+    def __init__(self, adj_resources, edges, rowNum, columnNum):
         #dictionary of resources and attached rolls?
-        self.resources = nearby
+        self.resources = adj_resources
 
         #edges convention: 0th index is left, 1st index is center, 2nd index is right
         self.edges = edges
         
         self.row = rowNum
         self.column = columnNum
-        self.player = player
+        self.player = None
         
         self.type = BuildType.Empty
 
@@ -26,8 +26,8 @@ class Edge:
         self.node1 = None
         self.node2 = None
 
-    def build_road(self, playerid):
-        self.player = playerid
+    def build_road(self, player):
+        self.player = player
 
     def add_nodes(self, start, end):
         self.node1 = start

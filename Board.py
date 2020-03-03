@@ -1,6 +1,5 @@
-from enum import Enum
-from Player import Player
 from Connectors import *
+from Player import *
 import random
 
 class Board:
@@ -19,43 +18,26 @@ class Board:
                 resources = player.total_resources()
                 if resources > 7:
                     player.discard_half()
-                    print("\tPlayer " + str(player.ID) + " had " + str(resources) + " resources and discarded " + str(resources - player.total_resources()))
+                    print("\tPlayer " + str(player.id) + " had " + str(resources) + " resources and discarded " + str(resources - player.total_resources()))
                 else:
-                    print("\tPlayer " + str(player.ID) + " has " + str(resources) + " resouces. No cards are discarded")
+                    print("\tPlayer " + str(player.id) + " has " + str(resources) + " resouces. No cards are discarded")
         else:
             for tile in self.layout:
                 tile.distribute(roll)
 
 
     def setup(self):
-        tile1 = Tile(Resource.Lumber, 11)
-        tile2 = Tile(Resource.Wool, 12)
-        tile3 = Tile(Resource.Grain, 9)
-        tile4 = Tile(Resource.Brick, 4)
-        tile5 = Tile(Resource.Ore, 6)
-        tile6 = Tile(Resource.Brick, 5)
-        tile7 = Tile(Resource.Wool, 10)
-        tile8 = Tile(Resource.Desert, 7)
-        tile9 = Tile(Resource.Lumber, 3)
-        tile10 = Tile(Resource.Grain, 11)
-        tile11 = Tile(Resource.Lumber, 4)
-        tile12 = Tile(Resource.Grain, 8)
-        tile13 = Tile(Resource.Brick, 8)
-        tile14 = Tile(Resource.Wool, 10)
-        tile15 = Tile(Resource.Wool, 9)
-        tile16 = Tile(Resource.Ore, 3)
-        tile17 = Tile(Resource.Ore, 5)
-        tile18 = Tile(Resource.Grain, 2)
-        tile19 = Tile(Resource.Lumber, 6)
-        self.layout = [tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13, tile14, tile15, tile16, tile17, tile18, tile19]
-        player1 = Player(1)
-        player2 = Player(2)
-        player3 = Player(3)
-        player4 = Player(4)
-        self.players = [player1, player2, player3, player4]
+        
+        self.players.append(Player(1))
+        self.players.append(Player(2))
+        self.players.append(Player(3))
+        self.players.append(Player(4))
+        
 
         # Create a list for storing edges. Edge location shown in basic_layout.png
         self.edges = [Edge() for i in range(72)]
+        
+        
         node_1_2 = Node({11 : Resource.Lumber}, [None, self.edges[0], self.edges[1]], 1, 2)
         node_0_3 = Node({11 : Resource.Lumber}, [self.edges[1], None, self.edges[2]], 0, 3)
         node_1_4 = Node({11 : Resource.Lumber, 12: Resource.Wool}, [self.edges[2], self.edges[3], self.edges[4]], 1,4)
@@ -110,6 +92,27 @@ class Board:
         node_11_3 = Node({5 : Resource.Ore},[self.edges[66],None,self.edges[67]],11,3)
         node_10_2 = Node({5 : Resource.Ore},[None,self.edges[55],self.edges[66]],10,2)
         node_3_9 = Node({10 : Resource.Wool}, [self.edges[21], self.edges[22], None], 3, 9)
+        
+        self.layout.append(Tile(Resource.Lumber, 11, [node_1_2, node_0_3, node_1_4, node_2_4, node_3_3, node_2_2]))
+        self.layout.append(Tile(Resource.Wool, 12, [node_1_4,node_0_5,node_1_6,node_2_6,node_3_5,node_2_4]))
+        self.layout.append(Tile(Resource.Grain, 9, [node_1_6,node_0_7,node_1_8,node_2_8,node_3_7,node_2_6]))
+        self.layout.append(Tile(Resource.Brick, 4, [node_3_1,node_2_2,node_3_3,node_4_3,node_5_2,node_4_1]))
+        self.layout.append(Tile(Resource.Ore, 6, [node_3_3,node_2_4,node_3_5,node_4_5,node_5_4,node_4_3]))
+        self.layout.append(Tile(Resource.Brick, 5, [node_3_5,node_2_6,node_3_7,node_4_7,node_5_6,node_4_5]))
+        self.layout.append(Tile(Resource.Wool, 10, [node_3_7,node_2_8,node_3_9,node_4_9,node_5_8,node_4_7]))
+        self.layout.append(Tile(Resource.Desert, 7, [node_5_0,node_4_1,node_5_2,node_6_2,node_7_1,node_6_0]))
+        self.layout.append(Tile(Resource.Lumber, 3, [node_5_2,node_4_3,node_5_4,node_6_4,node_7_3,node_6_2]))
+        self.layout.append(Tile(Resource.Grain, 11, [node_5_4,node_4_5,node_5_6,node_6_6,node_7_5,node_6_4]))
+        self.layout.append(Tile(Resource.Lumber, 4, [node_5_6,node_4_7,node_5_8,node_6_8,node_7_7,node_6_6]))
+        self.layout.append(Tile(Resource.Grain, 8, [node_5_8,node_4_9,node_5_10,node_6_10,node_7_9,node_6_8]))
+        self.layout.append(Tile(Resource.Brick, 8, [node_7_1,node_6_2,node_7_3,node_8_3,node_9_2,node_8_1]))
+        self.layout.append(Tile(Resource.Wool, 10, [node_7_3,node_6_4,node_7_5,node_8_5,node_9_4,node_8_3]))
+        self.layout.append(Tile(Resource.Wool, 9, [node_7_5,node_6_6,node_7_7,node_8_7,node_9_6,node_8_5]))
+        self.layout.append(Tile(Resource.Ore, 3, [node_7_7,node_6_8,node_7_9,node_8_9,node_9_8,node_8_7]))
+        self.layout.append(Tile(Resource.Ore, 5, [node_9_2,node_8_3,node_9_4,node_10_4,node_11_3,node_10_2]))
+        self.layout.append(Tile(Resource.Grain, 2, [node_9_4,node_8_5,node_9_6,node_10_6,node_11_5,node_10_4]))
+        self.layout.append(Tile(Resource.Lumber, 6, [node_9_6,node_8_7,node_9_8,node_10_8,node_11_7,node_10_6]))
+        
         self.nodes = [node_1_2, node_0_3, node_1_4, node_0_5, node_1_6, node_0_7, node_1_8, node_2_8,\
             node_3_7, node_2_6, node_3_5, node_2_4, node_3_3, node_2_2, node_3_1, node_4_1, node_5_2,\
             node_4_3, node_5_4, node_4_5, node_5_6, node_4_7, node_5_8, node_4_9, node_5_10, node_6_10,\
@@ -190,14 +193,6 @@ class Board:
         self.edges[69].add_nodes(node_11_5, node_10_6)
         self.edges[70].add_nodes(node_10_6, node_11_7)
         self.edges[71].add_nodes(node_11_7, node_10_8)
-
-class Resource(Enum):
-    Desert = 0
-    Lumber = 1
-    Wool = 2
-    Ore = 3
-    Grain = 4
-    Brick = 5
     
 class EdgeType(Enum):
     Left = 1
@@ -205,21 +200,15 @@ class EdgeType(Enum):
     Right = 3
     
 class Tile:
-    def __init__(self, resource, value):
+    def __init__(self, resource, value, adj_nodes):
         self.resource = resource
         self.value = value
-        self.players = []
-
+        self.nodes = adj_nodes
+        
     def distribute(self, roll_value):
         if self.value == roll_value:
-            for person in self.players:
-                if self.resource == Resource.Lumber:
-                    person.lumberCount += 1
-                elif self.resource == Resource.Wool:
-                    person.woolCount += 1
-                elif self.resource == Resource.Ore:
-                    person.oreCount += 1
-                elif self.resource == Resource.Grain:
-                    person.grainCount += 1
-                elif self.resource == Resource.Brick:
-                    person.brickCount += 1
+            for node in self.nodes:
+                if node.type == BuildType.Settlement:
+                    node.player.resources[self.resource] += 1
+                elif node.type == BuildType.City:
+                    node.player.resources[self.resource] += 2

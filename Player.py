@@ -1,12 +1,19 @@
+from enum import Enum
+
 #for storing player states
 class Player:
     def __init__(self, id = None):
-        self.ID = id
-        self.lumberCount = 0
-        self.woolCount = 0
-        self.oreCount = 0
-        self.grainCount = 0
-        self.brickCount = 0
+        self.id = id
+        
+        self.resources = \
+        {
+          Resource.Lumber : 0,
+          Resource.Wool : 0,
+          Resource.Ore : 0,
+          Resource.Grain : 0,
+          Resource.Brick : 0
+        }
+        
         self.settlementCount = 0
         self.cityCount = 0
         self.longestRoad = 0
@@ -16,46 +23,46 @@ class Player:
         return self.settlementCount + self.cityCount * 2 + self.longestRoad
 
     def can_build_settlement(self):
-        return self.lumberCount >= 1 and self.brickCount >= 1 and self.woolCount >= 1 and self.grainCount >= 1
+        return self.resources[Resource.Lumber] >= 1 and self.resources[Resource.Brick] >= 1 and self.resources[Resource.Wool] >= 1 and self.resources[Resource.Grain] >= 1
 
     def build_set(self):
-        self.lumberCount -= 1
-        self.brickCount -= 1
-        self.woolCount -= 1
-        self.grainCount -= 1
+        self.resources[Resource.Lumber] -= 1
+        self.resources[Resource.Brick] -= 1
+        self.resources[Resource.Wool] -= 1
+        self.resources[Resource.Grain] -= 1
         self.settlementCount += 1
 
     def can_build_road(self):
-        return self.lumberCount >= 1 and self.brickCont >= 1
+        return self.resources[Resource.Lumber] >= 1 and self.resources[Resource.Brick] >= 1
     
     def build_road(self):
-        self.lumberCount -= 1
-        self.brickCount -= 1
+        self.resources[Resource.Lumber] -= 1
+        self.resources[Resource.Brick] -= 1
 
     def can_build_city(self):
-        return self.oreCount >= 3 and self.grainCount >= 2 and self.settlementCount >= 1
+        return self.resources[Resource.Ore] >= 3 and self.resources[Resource.Grain] >= 2 and self.settlementCount >= 1
         
     def build_city(self):
-        self.oreCount -= 3
-        self.grainCount -= 2
+        self.resources[Resource.Ore] -= 3
+        self.resources[Resource.Grain] -= 2
         self.settlementCount -= 1
         self.cityCount += 1
 
     def total_resources(self):
-        return self.lumberCount + self.woolCount + self.oreCount + self.grainCount + self.brickCount
+        return sum(self.resources.values())
 
     def discard_half(self):
-        discards = player.total_resources() // 2
-        for i in range(0, discards):
+        num_discards = self.total_resources() // 2
+        for i in range(0, num_discards):
             resource = random.randint(1,5)
-            if resource == 1:
-                lumberCount -= 1
-            elif resource == 2:
-                woolCount -= 1
-            elif resource == 3:
-                oreCount -= 1
-            elif resouce == 4:
-                grainCount -= 1
-            else:
-                brickCount -= 1
+            self.resources[resource] -= 1
 
+
+                
+class Resource(Enum):
+    Desert = 0
+    Lumber = 1
+    Wool = 2
+    Ore = 3
+    Grain = 4
+    Brick = 5

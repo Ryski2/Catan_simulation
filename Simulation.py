@@ -1,4 +1,5 @@
 from Board import Board
+from Connectors import BuildType
 import random
 
 max_turns = 3
@@ -27,7 +28,7 @@ class Simulation:
             print("Turn " + str(i + 1))
             self.game_turn()
             
-            
+        print()    
         print("Game Ended")
             
     def get_random_empty_node(self):
@@ -57,10 +58,10 @@ class Simulation:
             #note: a node could be empty but all surrounding edges could be taken (this probably will never happen in a real game)
             if edge is not None:
                 found_node_edge = True
-                node.player = player.ID
-                #TODO: connect player with tile
-                edge.player = player.ID
-                print("Player " + str(player.ID) + " built a settlement at coordinates" +\
+                node.type = BuildType.Settlement
+                node.player = player
+                edge.player = player
+                print("Player " + str(player.id) + " built a settlement at coordinates" +\
                               node.get_coords() + ", and a road to " +\
                               #make sure we're giving the coordinates to the other node, not the node where the settlement is
                               (edge.node1.get_coords() if edge.node2 is node else edge.node2.get_coords()))
@@ -76,7 +77,7 @@ class Simulation:
             #each player rolls dice and acquires resources/places settlements
     def game_turn(self):
         for player in self.board.players:
-            print("Player " + str(player.ID) + "'s Turn")
+            print("Player " + str(player.id) + "'s Turn")
             self.board.dice_roll()
             #if possible, build
             
