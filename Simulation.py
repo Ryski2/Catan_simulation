@@ -37,13 +37,31 @@ class Simulation:
         print("---------------------------------------------")
         print("Game Ended")
         
+        #TODO: print board state out somehow
+        for player in self.board.players:
+            #print every players settlements, roads, and cities
+            print("Player " + str(player.id) + ": ")
+            print("\tSettlement Locations:")
+            for node in self.board.nodes:
+                if node.player == player and node.type == BuildType.Settlement:
+                    print("\t\t" + node.get_coords())
+            print("\tCity Locations:")
+            for node in self.board.nodes:
+                if node.player == player and node.type == BuildType.City:
+                    print("\t\t" + node.get_coords())
+            
+            print("\tEdge Between:")
+            for edge in self.board.edges:
+                if edge.player == player:
+                    print("\t\t" + edge.node1.get_coords() + " to " + edge.node2.get_coords())
+        
         if winner is not None:
             print("Player " + str(winner.id) + " Won")
         else:
             print("After " + str(max_turns) + " turns, no one has reached 10 points")
             highest_score = -1
             for player in self.board.players:
-                if player.points() > highest_score:
+                if player.points() >= highest_score:
                     highest_score = player.points()
                     
             winners = []
@@ -159,28 +177,28 @@ class Simulation:
                 #pick location to build
                 city_node = self.find_node_with_settlement(player)
                 if city_node is None:
-                    print("Player " + str(player.id) + " had resources to bulid a city but no valid location was found")
+                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found")
                 else:
                     player.build_city()
                     city_node.type = BuildType.City
-                    print("Player " + str(player.id) + " built a city at " + city_node.get_coords())
+                    print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
             if player.can_build_settlement():
                 settlement_node = self.find_valid_settlement_location(player)
                 if settlement_node is None:
-                    print("Player " + str(player.id) + " had resources to bulid a settlement but no valid location was found")
+                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a settlement but no valid location was found")
                 else:
                     settlement_node.player = player
                     settlement_node.type = BuildType.Settlement
                     player.build_settlement()
-                    print("Player " + str(player.id) + " built a settlement at " + settlement_node.get_coords())                                
+                    print("\t\tPlayer " + str(player.id) + " built a settlement at " + settlement_node.get_coords())                                
             if player.can_build_road():
                 road_edge = self.find_valid_road_location(player)
                 if road_edge is None:
-                    print("Player " + str(player.id) + " had resources to bulid a road but no valid location was found")
+                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found")
                 else:
                     player.build_road()
                     road_edge.player = player
-                    print("Player " + str(player.id) + " built a road from " + road_edge.node1.get_coords() + " to " + road_edge.node2.get_coords())
+                    print("\t\tPlayer " + str(player.id) + " built a road from " + road_edge.node1.get_coords() + " to " + road_edge.node2.get_coords())
 
             #check if anyone is winning
             if player.points() >= 10:
