@@ -2,10 +2,12 @@ from node import Node
 from edge import Edge
 from graph import Graph
 
-# SETUP
+#########
+# SETUP #
+#########
 
 # resource tiles, dice values, players
-game_board = Graph()
+board = Graph()
 # {dice roll : Nodes}
 # {building : {resources : number}}
 
