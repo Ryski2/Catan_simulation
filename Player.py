@@ -3,22 +3,33 @@ import random
 
 #for storing player states
 class Player:
-    def __init__(self, id = None):
+    def __init__(self, id, strategy):
         self.id = id
-        
+
+        # The player's game strategy, default strategy being None
+        self.strategy = strategy
+
         self.resources = \
         {
-          Resource.Lumber : 0,
-          Resource.Wool : 0,
+          Resource.Lumber : 4,
+          Resource.Wool : 2,
           Resource.Ore : 0,
-          Resource.Grain : 0,
-          Resource.Brick : 0
+          Resource.Grain : 2,
+          Resource.Brick : 4
         }
-        
-        self.settlementCount = 2 #initially build settlements
+
+        self.settlementCount = 0 #initially build settlements
         self.cityCount = 0
         self.longestRoad = 0
         self.locations = []
+
+        # keep track of edges and nodes belonging to the player
+        self.edges = set();
+        self.nodes = set();
+
+        # keep track of free edges and nodes available to the player
+        self.buildable_edges = set();
+        self.buildable_nodes = set();
 
     def points(self):
         return self.settlementCount + self.cityCount * 2 + self.longestRoad
@@ -35,14 +46,14 @@ class Player:
 
     def can_build_road(self):
         return self.resources[Resource.Lumber] >= 1 and self.resources[Resource.Brick] >= 1
-    
+
     def build_road(self):
         self.resources[Resource.Lumber] -= 1
         self.resources[Resource.Brick] -= 1
 
     def can_build_city(self):
         return self.resources[Resource.Ore] >= 3 and self.resources[Resource.Grain] >= 2 and self.settlementCount >= 1
-        
+
     def build_city(self):
         self.resources[Resource.Ore] -= 3
         self.resources[Resource.Grain] -= 2
@@ -61,7 +72,7 @@ class Player:
                 self.resources[res] -= 1
                 discarded += 1
 
-                
+
 class Resource(Enum):
     Desert = 0
     Lumber = 1

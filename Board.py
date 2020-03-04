@@ -3,13 +3,20 @@ from Player import *
 import random
 
 class Board:
-    def __init__(self):
+    # player_strategies = [1, None, None, None] means Player 1 uses strategy 1 while players 2 to 4 use the default strategy.
+    # board_layout = 'basic' generates the layout shown in basic_layout.jpg.
+    # board_layout = "random" would generate a random board layout.
+    def __init__(self, player_strategies, board_layout):
         self.layout = []
         self.players = []
         self.edges = []
         self.nodes = []
-        self.setup()
-        
+        self.setup(player_strategies, board_layout)
+
+        # Keep track of edges and nodes on the board that can be built upon
+        self.buildable_edges = set(self.edges)
+        self.buildable_nodes = set(self.nodes)
+
     def dice_roll(self):
         roll = random.randint(1,6) + random.randint(1,6)
         print("\t\tRolled a " + str(roll))
@@ -26,18 +33,75 @@ class Board:
                 tile.distribute(roll)
 
 
-    def setup(self):
-        
-        self.players.append(Player(1))
-        self.players.append(Player(2))
-        self.players.append(Player(3))
-        self.players.append(Player(4))
-        
+    def setup(self, player_strategies, board_layout):
 
+        for i in range(len(player_strategies)):
+            self.players.append(Player(i + 1, player_strategies[i]))
+
+        if board_layout == 'random':
+            resources = [Resource.Lumber, Resource.Wool, Resource.Grain] * 4 + [Resource.Brick, Resource.Ore] * 3 + [Resource.Desert]
+            number_tokens = [2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12]
+            resources = random.sample(resources, len(resources))
+            number_tokens = random.sample(number_tokens, len(number_tokens))
+        elif board_layout == 'basic':
+            resources = [Resource.Lumber, Resource.Wool, Resource.Grain, \
+            Resource.Brick, Resource.Ore, Resource.Brick, Resource.Wool, \
+            Resource.Desert, Resource.Lumber, Resource.Grain, Resource.Lumber, Resource.Grain, \
+            Resource.Brick, Resource.Wool, Resource.Wool, Resource.Ore, \
+            Resource.Ore, Resource.Grain, Resource.Lumber]
+            number_tokens = [11, 12, 9, 4, 6, 5, 10, 3, 11, 4, 8, 8, 10, 9, 3, 5, 2, 6]
+
+        edges_dict = {}
+        nodes_dict = {}
+        upper_left = [(1, 2), (1, 4), (1, 6), (3, 1), (3, 3), (3, 5), (3, 7), (5, 0), (5, 2), (5, 4), (5, 6), (5, 8), (7, 1), (7, 3), (7, 5), (7, 7), (9, 2), (9, 4), (9, 6) ]
+        edge_order = [(1, 2), (0, 2), (0, 1), (1, 0), (2, 0), (2, 1)]
+        self.layout = [None] * len(upper_left)
+        desert_count = 0
+        for k in range(len(upper_left)):
+            x = upper_left[k][0]
+            y = upper_left[k][1]
+            node_keys = [(x, y), (x - 1, y + 1), (x, y + 2), (x + 1, y + 2), (x + 2, y + 1), (x + 1, y)]
+            edge_keys = [None] * 6;
+            number = None
+            if resources[k] == Resource.Desert:
+                desert_count = 1
+                number = 7
+            else:
+                number = number_tokens[k - desert_count]
+            self.layout[k] = Tile(resources[k], number, [None] * 6)
+            for i in range(6):
+                j = (i + 1) % 6
+                edge_keys[i] = (node_keys[i][0] + node_keys[j][0], node_keys[i][1] + node_keys[j][0]);
+                node = None;
+                if (node_keys[i] not in nodes_dict):
+                    node = Node(set(), [None] * 3, node_keys[i][0], node_keys[i][1])
+                    nodes_dict.update({node_keys[i]: node})
+                else:
+                    node = nodes_dict.get(node_keys[i])
+                self.layout[k].nodes[i] = node
+
+            for i in range(6):
+                if (edge_keys[i] not in edges_dict):
+                    j = (i + 1) % 6
+                    edge = Edge()
+                    edge.add_nodes(nodes_dict.get(node_keys[i]), nodes_dict.get(node_keys[j]))
+                    edges_dict.update({edge_keys[i]: edge})
+
+            for i in range(6):
+                j = (i - 1) % 6
+                node = nodes_dict.get(node_keys[i])
+                node.resources.add(self.layout[k])
+                node.edges[edge_order[i][0]] = edges_dict.get(edge_keys[j])
+                node.edges[edge_order[i][1]] = edges_dict.get(edge_keys[i])
+        self.edges = list(edges_dict.values())
+        self.nodes = list(nodes_dict.values())
+
+
+"""
         # Create a list for storing edges. Edge location shown in basic_layout.png
         self.edges = [Edge() for i in range(72)]
-        
-        
+
+
         node_1_2 = Node({11 : Resource.Lumber}, [None, self.edges[0], self.edges[1]], 1, 2)
         node_0_3 = Node({11 : Resource.Lumber}, [self.edges[1], None, self.edges[2]], 0, 3)
         node_1_4 = Node({11 : Resource.Lumber, 12: Resource.Wool}, [self.edges[2], self.edges[3], self.edges[4]], 1,4)
@@ -92,7 +156,7 @@ class Board:
         node_11_3 = Node({5 : Resource.Ore},[self.edges[66],None,self.edges[67]],11,3)
         node_10_2 = Node({5 : Resource.Ore},[None,self.edges[55],self.edges[66]],10,2)
         node_3_9 = Node({10 : Resource.Wool}, [self.edges[21], self.edges[22], None], 3, 9)
-        
+
         self.layout.append(Tile(Resource.Lumber, 11, [node_1_2, node_0_3, node_1_4, node_2_4, node_3_3, node_2_2]))
         self.layout.append(Tile(Resource.Wool, 12, [node_1_4,node_0_5,node_1_6,node_2_6,node_3_5,node_2_4]))
         self.layout.append(Tile(Resource.Grain, 9, [node_1_6,node_0_7,node_1_8,node_2_8,node_3_7,node_2_6]))
@@ -112,7 +176,7 @@ class Board:
         self.layout.append(Tile(Resource.Ore, 5, [node_9_2,node_8_3,node_9_4,node_10_4,node_11_3,node_10_2]))
         self.layout.append(Tile(Resource.Grain, 2, [node_9_4,node_8_5,node_9_6,node_10_6,node_11_5,node_10_4]))
         self.layout.append(Tile(Resource.Lumber, 6, [node_9_6,node_8_7,node_9_8,node_10_8,node_11_7,node_10_6]))
-        
+
         self.nodes = [node_1_2, node_0_3, node_1_4, node_0_5, node_1_6, node_0_7, node_1_8, node_2_8,\
             node_3_7, node_2_6, node_3_5, node_2_4, node_3_3, node_2_2, node_3_1, node_4_1, node_5_2,\
             node_4_3, node_5_4, node_4_5, node_5_6, node_4_7, node_5_8, node_4_9, node_5_10, node_6_10,\
@@ -193,18 +257,18 @@ class Board:
         self.edges[69].add_nodes(node_11_5, node_10_6)
         self.edges[70].add_nodes(node_10_6, node_11_7)
         self.edges[71].add_nodes(node_11_7, node_10_8)
-    
+"""
 class EdgeType(Enum):
     Left = 1
     Center = 2
     Right = 3
-    
+
 class Tile:
     def __init__(self, resource, value, adj_nodes):
         self.resource = resource
         self.value = value
         self.nodes = adj_nodes
-        
+
     def distribute(self, roll_value):
         if self.value == roll_value:
             for node in self.nodes:

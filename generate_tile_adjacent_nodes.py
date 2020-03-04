@@ -11,4 +11,3 @@ for x,y in upper_left:
     res += "node_" + str(x + 2) + "_" + str(y + 1) + ","
     res += "node_" + str(x + 1) + "_" + str(y)
     print(res)
-    

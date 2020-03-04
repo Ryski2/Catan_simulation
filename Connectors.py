@@ -8,11 +8,11 @@ class Node:
 
         #edges convention: 0th index is left, 1st index is center, 2nd index is right
         self.edges = edges
-        
+
         self.row = rowNum
         self.column = columnNum
         self.player = None
-        
+
         self.type = BuildType.Empty
 
     def get_coords(self):
@@ -28,7 +28,7 @@ class Edge:
 
     def build_road(self, player):
         self.player = player
-        
+
     def get_other_node(self, node):
         if self.node1 is not node:
             return self.node1
@@ -40,7 +40,7 @@ class Edge:
         self.node2 = end
     #possibly add a method to include node location in the edge?
     #should be able to extract it from self.node1.row and self.node1.column
-    
+
 class BuildType(Enum):
     Empty = 0
     Settlement = 1
