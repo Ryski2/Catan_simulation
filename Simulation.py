@@ -53,25 +53,11 @@ class Simulation:
                     self.steal(player)
                 else:
                     self.board.distribute(roll)
-                self.trade(player)
+                # To implement trading, possibly add self.trade(player) here
                 self.build(player)
                 if player.win():
                     return player
         self.board.turns += 1
-
-    def trade(self, player):
-        strategies = player.strategies
-        if Strategies.Trade in strategies:
-            # trade with other players
-            for other in self.board.players:
-                if other is not player:
-                    player.trade_with_player(other)
-            # trade 4:1
-            player.trade_four_one()
-
-        # Default strategy: no trading
-
-
 
     def build(self, player):
         owned_nodes = player.nodes;

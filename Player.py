@@ -1,5 +1,4 @@
 from enum import Enum
-import math
 import random
 
 #for storing player states
@@ -69,39 +68,16 @@ class Player:
 
     def total_resources(self):
         return sum(self.resources.values())
-
-    # TRADING
-    # trade most-had resource for least-had resource
-    def trade_with_player(self, other):
-        max_res, min_res = self.__get_max_min_resource()
-        if max_res != min_res:
-            if other.resources[max_res] < other.resources[min_res]:
-                self.resources[max_res] -= 1
-                self.resources[min_res] += 1
-                other.resources[max_res] += 1
-                other.resources[min_res] -= 1
-
-    def trade_four_one(self):
-        max_res, min_res = self.__get_max_min_resource()
-        if self.resources[max_res] > self.resources[min_res] + 4:
-            self.resources[max_res] -= 4
-            self.resources[min_res] += 1
-
-    def __get_max_min_resource(self):
-        max_resource = None
-        max_count = -math.inf
-        min_resource = None
-        min_count = math.inf
-        for resource in self.resources:
-            count = self.resources[resource]
-            if count > max_count:
-                max_resource = resource
-                max_count = count
-            if count < min_count:
-                min_resource = resource
-                min_count = count
-        return (max_resource, min_resource)
-    # TRADING
+"""
+    def discard_half(self):
+        num_discards = self.total_resources() // 2
+        discarded = 0
+        while (discarded < num_discards):
+            res = Resource(random.randint(1,5))
+            if self.resources[res] > 0:
+                self.resources[res] -= 1
+                discarded += 1
+"""
 
 class Resource(Enum):
     Desert = 0
@@ -116,4 +92,4 @@ class Resource(Enum):
 class Strategies(Enum):
     #Basic = 1
     Dummy = 1
-    Trade = 2
+    Prioritize_Settlements = 2
