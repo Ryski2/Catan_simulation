@@ -12,7 +12,8 @@ print("Seed: " + str(seed))
 # each player can carry a set of strategies
 # Multiple stratgies can coexist.
 # For example, a building strategy and a trading strategy don't comflict
-sim = Simulation([{Strategies.Trade}] + [set()] * 3, "basic")
+strats = [{Strategies.Trade}]* + [set()] * 3
+sim = Simulation(strats, "basic")
 sim.run()
 print("Seed: " + str(seed))
 """
