@@ -6,7 +6,7 @@ class Node:
         #dictionary of resources and attached rolls?
         self.resources = adj_resources
 
-        #edges convention: 0th index is left, 1st index is center, 2nd index is right
+        #edges convention: use enum in Board.py
         self.edges = edges
 
         self.row = rowNum
