@@ -10,8 +10,8 @@ import itertools
 max_turns = 200
 
 class Simulation:
-    def __init__(self, player_strategies, board_layout, build_ratios = [0] * 4):
-        self.board = Board(player_strategies, board_layout, build_ratios)
+    def __init__(self, player_strategies, board_layout, random_order, build_ratios = [0] * 4, ):
+        self.board = Board(player_strategies, board_layout, random_order, build_ratios)
 
     def run(self):
         winner = None

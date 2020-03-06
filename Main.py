@@ -4,17 +4,19 @@ import Globals as G
 import numpy as np
 import random
 import sys
+import time
+import datetime
 
 # run simulation once with four players who have no strategies with the basic board layout (basic_layout.jpg).
 
 # each player can carry a set of strategies
 # Multiple stratgies can coexist.
 # For example, a building strategy and a trading strategy don't comflict
-
+random_order = False
 strats = [{Strategies.Build_High_Probability_Tiles, Strategies.Prioritize_Settlements}] * 2 + [{Strategies.Prioritize_Settlements}] * 2
 ratios = [1, 2, 3, 4]
 
-sims = 100000
+sims = 500
 
 if sims > 1:
     G.print_level = 0
@@ -25,6 +27,7 @@ total_turns = np.zeros((sims, 1))
 total_points = np.zeros((sims, 4))
 bar_len = 50
 
+start = time.process_time()
 for i in range(0, sims):
     #progress bar
     if (i % 5 == 0):
@@ -35,12 +38,13 @@ for i in range(0, sims):
     seed = random.randrange(sys.maxsize)
     random.seed(seed)
     #print("Seed: " + str(seed))
-    sim = Simulation(strats, "basic", ratios)
+    sim = Simulation(strats, "basic", random_order, ratios)
     turns, points = sim.run()
     total_turns[i] = turns
     total_points[i] = points
     #print(str(turns) + " Turns")
     #print(points)
+end = time.process_time()
 print("\r[" + "=" * bar_len + "]\t" + str(sims) + "/" + str(sims) + "\t" + "100% Done\t\t\t")
 
 print("Turns:")
@@ -51,6 +55,7 @@ print("\tMean: " + str(np.mean(total_points, 0)))
 print("\tSt. Dev.: " + str(np.std(total_points, 0)))
 print("Strategies Used: " + str(strats))
 
+print("Total Elapsed: " + str(datetime.timedelta(seconds=end - start)))
 
 """
 blockPrint()
