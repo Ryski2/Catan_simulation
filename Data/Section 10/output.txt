@@ -1,0 +1,22 @@
+Turns:
+	Mean: [157.1204]
+	St. Dev.: [60.05977109]
+Wins
+	Count: [3413. 3438. 3389. 3451.]
+	Percent: [0.3413 0.3438 0.3389 0.3451]
+Points:
+	Mean: [3.5793 3.6077 3.567  3.5882]
+	St. Dev.: [2.55466466 2.58692882 2.55015901 2.54460621]
+Roads:
+	Mean: [6.3482 7.1009 7.4867 7.8565]
+	St. Dev.: [5.4546821  6.0737566  6.31111901 6.70767529]
+Settlements:
+	Mean: [2.4513 2.4925 2.478  2.4772]
+	St. Dev.: [2.07644608 2.12413365 2.11374454 2.14524594]
+Cities:
+	Mean: [0.564  0.5576 0.5445 0.5555]
+	St. Dev.: [0.98005306 0.97492679 0.96344162 0.94705847]
+Strategies Used: [{Road_Settlement_Ratio: 3}, {Road_Settlement_Ratio: 4}, {Road_Settlement_Ratio: 5}, {Road_Settlement_Ratio: 6}]
+Random Player Order: True
+Total Elapsed: 0:00:49.709771
+

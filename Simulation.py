@@ -22,7 +22,16 @@ class Simulation:
         points = np.zeros(4)
         for player in self.board.players:
             points[player.id - 1] = player.points()
-        return self.board.turns, points
+        roads = np.zeros(4)
+        settlements = np.zeros(4)
+        cities = np.zeros(4)
+        for player in self.board.players:
+            roads[player.id - 1] = player.roadCount
+            settlements[player.id - 1] = player.settlementCount
+            cities[player.id - 1] = player.cityCount
+
+        winners = np.argwhere(points == np.max(points)).flatten()
+        return self.board.turns, winners, points, roads, settlements, cities
 
     def game_turn(self):
         turns = self.board.turns
@@ -135,7 +144,7 @@ class Simulation:
                 build_road = build_road and len(player.buildable_nodes) == 0
             if Strategies.Road_Settlement_Ratio in strategies:
                 road_settlement_ratio = strategies.get(Strategies.Road_Settlement_Ratio)
-                build_road = build_road and player.cityCount > player.roadCount / road_settlement_ratio
+                build_road = build_road and player.cityCount + player.settlementCount > player.roadCount / road_settlement_ratio
             if build_road:
                 if len(buildable_edges) != 0:
                     rode_edge = self.find_valid_road_location(player, buildable_edges)
@@ -259,16 +268,14 @@ class Simulation:
 
     def move_robber(self, player):
         strategies = player.strategies
-        if Strategies.Dummy in strategies:
-            """ADD STRATEGIES HERE"""
-            raise NotImplementedError()
-
+        tiles = self.board.layout
+        other_tiles = tiles.remove(self.board.robber_tile)
+        if Strategies.Robber_To_Opponent in strategies:
+            for tile in other_tiles:
+                #sum weighted probabilities, using negative value if own settlement
+                pass
         else: # Default strategy
-            new_robber_tile = self.board.robber_tile
-            index = -1
-            while new_robber_tile == self.board.robber_tile:
-                new_robber_tile = random.choice(self.board.layout)
-            self.board.move_robber(new_robber_tile)
+            self.board.move_robber(random.choice(other_tiles))
 
     # "The person moving the robber must steal a card from a player adjacent to the robber if possible."
     def steal(self, player):

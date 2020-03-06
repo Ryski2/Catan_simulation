@@ -156,6 +156,7 @@ class Strategies(Enum):
     Build_All = 5 #build as many times as possible every turn.
     Avoid_Shore_and_Desert = 6
     Adjust_Resource_Rates = 7 # not compatible with Avoid_Shore_and_Desert
+    Robber_To_Opponent = 8
 
     def __str__(self):
         return self.name
