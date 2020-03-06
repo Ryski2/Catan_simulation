@@ -113,20 +113,20 @@ class Simulation:
                     city_node = random.sample(player.settlements, 1)[0]
                     self.board.build_city(player, city_node)
                 else:
-                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found")
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found", 3)
                 #print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
             if player.can_build_settlement():
                 if len(buildable_nodes) != 0:
                     settlement_node = self.find_valid_settlement_location(player, buildable_nodes)
                     self.board.build_settlement(player, settlement_node)
                 else:
-                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a settlement but no valid location was found")
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a settlement but no valid location was found", 3)
             if player.can_build_road() and len(player.buildable_nodes) == 0: #####
                 if len(buildable_edges) != 0:
                     rode_edge = self.find_valid_road_location(player, buildable_edges)
                     self.board.build_road(player, rode_edge)
                 else:
-                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found")
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found", 3)
 
         strategies = player.strategies
         if Strategies.PrioritizeSettlements in strategies:
@@ -157,14 +157,14 @@ class Simulation:
                     city_node = random.sample(player.settlements, 1)[0]
                     self.board.build_city(player, city_node)
                 else:
-                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found", 3)
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to build a city but no valid location was found", 3)
                 #print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
             if player.can_build_settlement():
                 if len(buildable_nodes) != 0:
                     settlement_node = random.sample(buildable_nodes, 1)[0]
                     self.board.build_settlement(player, settlement_node)
                 else:
-                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a settlement but no valid location was found", 3)
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to build a settlement but no valid location was found", 3)
             if player.can_build_road() \
                 and (len(player.buildable_nodes) == 0 if prioritize_settlements else True) \
                 and (player.settlementCount + player.cityCount > player.roadCount / road_settlement_ratio if road_settlement_ratio != 0 else True): #####
@@ -172,7 +172,7 @@ class Simulation:
                     rode_edge = random.sample(buildable_edges, 1)[0]
                     self.board.build_road(player, rode_edge)
                 else:
-                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found", 3)
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to build a road but no valid location was found", 3)
 
     def find_valid_settlement_location(self, player, buildable_nodes):
         strategies = player.strategies
