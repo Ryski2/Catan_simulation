@@ -4,11 +4,17 @@ import random
 
 #for storing player states
 class Player:
-    def __init__(self, id, strategies):
+    def __init__(self, id, strategies, build_ratio = 0):
         self.id = id
 
         # The player's game strategy, default strategy being None
         self.strategies = strategies
+
+        if Strategies.RoadSettlementRatio in strategies:
+            if build_ratio != 0:
+                self.build_ratio = build_ratio
+            else:
+                raise ValueError("If using RoadSettlementRatio need to provide a build ratio for each player")
 
         self.resources = \
         {
@@ -20,7 +26,7 @@ class Player:
         }
 
         self.roadCount = 0
-        self.settlementCount = 0 #initially built settlements
+        self.settlementCount = 0
         self.cityCount = 0
         self.longestRoad = 0
         self.locations = []
@@ -117,3 +123,5 @@ class Strategies(Enum):
     #Basic = 1
     Dummy = 1
     Trade = 2
+    PrioritizeSettlements = 3 #if there is a place to build a settlement, don't build a road
+    RoadSettlementRatio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
