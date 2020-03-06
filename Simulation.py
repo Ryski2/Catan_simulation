@@ -63,7 +63,7 @@ class Simulation:
                 if Strategies.Build_All in player.strategies:
                     while player.can_build_city() and player.settlementCount > 0 \
                     or player.can_build_settlement() and len(player.buildable_nodes) != 0 \
-                    or player.can_build_road() and len(player.buildable_edges) != 0 and len(player.buildable_nodes) == 0:
+                    or player.can_build_road() and len(player.buildable_edges) != 0:
                         print(player.can_build_city(),player.can_build_settlement(),player.can_build_road(), len(player.buildable_edges),player.resources)
                         self.build(player)
                         print(player.can_build_city(),player.can_build_settlement(),player.can_build_road(), len(player.buildable_edges),player.resources)
