@@ -6,17 +6,31 @@ import random
 import sys
 import time
 import datetime
+import os
+from os import path
+
+if not path.exists("Data"):
+    os.mkdir("Data")
+
+if os.path.exists("Data/turns.dat") or os.path.exists("Data/points.dat"):
+    print("Make sure to rename the saved files before continuing")
+    while True:
+        text = input("Type y to continue anyways, n to exit: ")
+        if text == "y":
+           break
+        if text == "n":
+            sys.exit("Quitting.")
 
 # run simulation once with four players who have no strategies with the basic board layout (basic_layout.jpg).
 
 # each player can carry a set of strategies
 # Multiple stratgies can coexist.
 # For example, a building strategy and a trading strategy don't comflict
-random_order = False
-strats = [{Strategies.Build_High_Probability_Tiles, Strategies.Prioritize_Settlements}] * 2 + [{Strategies.Prioritize_Settlements}] * 2
-ratios = [1, 2, 3, 4]
+random_order = True
+strats = [{None}] * 4
+ratios = [0, 0, 0, 0]
 
-sims = 500
+sims = 1000
 
 if sims > 1:
     G.print_level = 0
@@ -54,8 +68,12 @@ print("Points:")
 print("\tMean: " + str(np.mean(total_points, 0)))
 print("\tSt. Dev.: " + str(np.std(total_points, 0)))
 print("Strategies Used: " + str(strats))
+print("Random Player Order: " + str(random_order))
 
 print("Total Elapsed: " + str(datetime.timedelta(seconds=end - start)))
+
+total_turns.tofile("Data/turns.dat")
+total_points.tofile("Data/points.dat")
 
 """
 blockPrint()
