@@ -25,10 +25,10 @@ class Simulation:
             print("---------------------------------------------")
             print()
             for player in self.board.players:
-                self.build(player);
+                self.build(player)
             # on second placement, players get the resources bordering their settlement
             for player in reversed(self.board.players):
-                self.build(player);
+                self.build(player)
             for roll in range(1, 12):
                 if roll != 7:
                     self.board.distribute(roll)
@@ -69,19 +69,15 @@ class Simulation:
             # trade 4:1
             player.trade_four_one()
 
-        # Default strategy: no trading
-
-
-
     def build(self, player):
-        owned_nodes = player.nodes;
-        owned_edges = player.edges;
+        owned_nodes = player.nodes
+        owned_edges = player.edges
         if self.board.turns == 0:
-            buildable_nodes = self.board.buildable_nodes;
-            buildable_edges = self.board.buildable_edges;
+            buildable_nodes = self.board.buildable_nodes
+            buildable_edges = self.board.buildable_edges
         else:
-            buildable_nodes = player.buildable_nodes;
-            buildable_edges = player.buildable_edges;
+            buildable_nodes = player.buildable_nodes
+            buildable_edges = player.buildable_edges
 
         strategies = player.strategies
         if Strategies.Dummy in strategies:

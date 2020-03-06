@@ -5,8 +5,10 @@ import itertools
 
 class Board:
     # player_strategies = [1, None, None, None] means Player 1 uses strategy 1 while players 2 to 4 use the default strategy.
-    # board_layout = 'basic' generates the layout shown in basic_layout.jpg.
-    # board_layout = "random" would generate a random board layout.
+    # board_layout = 'basic' - layout shown in basic_layout.jpg
+    #                'random' - random board layout
+    #                'res_const' - one of each type of resource tile replaced by desert
+    #                'val_const' - one of 5, 6, 8, 9 replaced by 12
 
     def __init__(self, player_strategies, board_layout):
         self.layout = []
@@ -99,6 +101,20 @@ class Board:
             Resource.Brick, Resource.Wool, Resource.Wool, Resource.Ore, \
             Resource.Ore, Resource.Grain, Resource.Lumber]
             number_tokens = [11, 12, 9, 4, 6, 5, 10, 3, 11, 4, 8, 8, 10, 9, 3, 5, 2, 6]
+        elif board_layout == 'res_const':
+            resources = [Resource.Lumber, Resource.Wool, Resource.Grain, \
+            Resource.Desert, Resource.Ore, Resource.Brick, Resource.Wool, \
+            Resource.Desert, Resource.Lumber, Resource.Grain, Resource.Desert, Resource.Grain, \
+            Resource.Brick, Resource.Desert, Resource.Wool, Resource.Ore, \
+            Resource.Desert, Resource.Desert, Resource.Lumber]
+            number_tokens = [11, 12, 9, 4, 6, 5, 10, 3, 11, 4, 8, 8, 10, 9, 3, 5, 2, 6]
+        elif board_layout == 'val_const':
+            resources = [Resource.Lumber, Resource.Wool, Resource.Grain, \
+            Resource.Brick, Resource.Ore, Resource.Brick, Resource.Wool, \
+            Resource.Desert, Resource.Lumber, Resource.Grain, Resource.Lumber, Resource.Grain, \
+            Resource.Brick, Resource.Wool, Resource.Wool, Resource.Ore, \
+            Resource.Ore, Resource.Grain, Resource.Lumber]
+            number_tokens = [11, 12, 9, 4, 12, 5, 10, 3, 11, 4, 12, 8, 10, 12, 3, 12, 2, 6]
 
         edges_dict = {}
         nodes_dict = {}
@@ -110,7 +126,7 @@ class Board:
             x = upper_left[k][0]
             y = upper_left[k][1]
             node_keys = [(x, y), (x - 1, y + 1), (x, y + 2), (x + 1, y + 2), (x + 2, y + 1), (x + 1, y)]
-            edge_keys = [None] * 6;
+            edge_keys = [None] * 6
             number = None
             if resources[k] == Resource.Desert:
                 desert_count = 1
@@ -124,7 +140,7 @@ class Board:
             for i in range(6):
                 j = (i + 1) % 6
                 edge_keys[i] = (node_keys[i][0] + node_keys[j][0], node_keys[i][1] + node_keys[j][0]);
-                node = None;
+                node = None
                 if (node_keys[i] not in nodes_dict):
                     node = Node(set(), [None] * 3, node_keys[i][0], node_keys[i][1])
                     nodes_dict.update({node_keys[i]: node})
