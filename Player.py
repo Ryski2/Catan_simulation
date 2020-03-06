@@ -11,7 +11,7 @@ class Player:
         # The player's game strategy, default strategy being None
         self.strategies = strategies
 
-        if Strategies.RoadSettlementRatio in strategies:
+        if Strategies.Road_Settlement_Ratio in strategies:
             if build_ratio != 0:
                 self.build_ratio = build_ratio
             else:
@@ -125,7 +125,7 @@ class Strategies(Enum):
     #Basic = 1
     Dummy = 1
     Trade = 2
-    PrioritizeSettlements = 3 #if there is a place to build a settlement, don't build a road
-    RoadSettlementRatio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
+    Prioritize_Settlements = 3 #if there is a place to build a settlement, don't build a road
+    Road_Settlement_Ratio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
     Avoid_Shore_and_Desert = 5
     Build_All = 6 #build as many times as possible every turn.

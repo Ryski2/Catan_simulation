@@ -11,13 +11,14 @@ import sys
 # Multiple stratgies can coexist.
 # For example, a building strategy and a trading strategy don't comflict
 #strats = [{Strategies.Trade}] + [set()] * 3
-strats = [{Strategies.PrioritizeSettlements, Strategies.Trade}] * 4
-#ratios = [3.4, 3.45, 3.55, 3.6]
+strats = [{Strategies.Road_Settlement_Ratio}] * 4
+ratios = [2] * 4
 
+
+sims = 1
 
 total_turns = 0
 total_points = [0, 0, 0, 0]
-sims = 200
 
 for i in range(0, sims):
     if (i % 20 == 0):
@@ -25,7 +26,7 @@ for i in range(0, sims):
     seed = random.randrange(sys.maxsize)
     random.seed(seed)
     #print("Seed: " + str(seed))
-    sim = Simulation(strats, "basic")
+    sim = Simulation(strats, "basic", ratios)
     turns, points = sim.run()
     total_turns += turns
     total_points += points
