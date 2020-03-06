@@ -3,15 +3,15 @@ from Connectors import BuildType
 from Player import Resource
 from Player import Strategies
 from Globals import v_print
-#import numpy as np
+import numpy as np
 import random
 import itertools
 
 max_turns = 200
 
 class Simulation:
-    def __init__(self, player_strategies = [None] * 4, board_layout = "random"):
-        self.board = Board(player_strategies, board_layout)
+    def __init__(self, player_strategies, board_layout, random_order):
+        self.board = Board(player_strategies, board_layout, random_order)
 
 
     def run(self):
@@ -19,7 +19,7 @@ class Simulation:
         while self.board.turns <= max_turns and winner is None:
             winner = self.game_turn()
         self.print_results(winner)
-        points = [0] * 4
+        points = np.zeros(4)
         for player in self.board.players:
             points[player.id - 1] = player.points()
         return self.board.turns, points
@@ -36,7 +36,7 @@ class Simulation:
             # on second placement, players get the resources bordering their settlement
             for player in reversed(self.board.players):
                 self.build(player);
-            for roll in range(1, 12):
+            for roll in range(2, 13):
                 if roll != 7:
                     self.board.distribute(roll)
             v_print("", 2)
@@ -132,22 +132,6 @@ class Simulation:
                         self.board.build_city(player, node)
                     else:
                         self.board.build_settlement(player, node)
-            """
-            if player.can_build_city():
-                #pick location to build
-                if len(player.settlements) != 0:
-                    city_node = random.sample(player.settlements, 1)[0]
-                    self.board.build_city(player, city_node)
-                else:
-                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found")
-                #print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
-            if player.can_build_settlement():
-                if len(buildable_nodes) != 0:
-                    settlement_node = self.find_valid_settlement_location(player, buildable_nodes)
-                    self.board.build_settlement(player, settlement_node)
-                else:
-                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a settlement but no valid location was found")
-            """
             build_road = player.can_build_road()
             if Strategies.Prioritize_Settlements in strategies:
                 build_road = build_road and len(player.buildable_nodes) == 0
@@ -163,6 +147,7 @@ class Simulation:
 
     def build_road_or_not(self, player):
         build_road = player.can_build_road()
+        strategies = player.strategies
         if Strategies.Prioritize_Settlements in strategies:
             build_road = build_road and len(player.buildable_nodes) == 0
         if Strategies.Road_Settlement_Ratio in strategies:

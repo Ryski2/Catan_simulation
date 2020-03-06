@@ -22,7 +22,7 @@ class Player:
         }
 
         self.roadCount = 0
-        self.settlementCount = 0 #initially built settlements
+        self.settlementCount = 0
         self.cityCount = 0
         self.longestRoad = 0
         self.locations = []
@@ -146,6 +146,7 @@ class Resource(Enum):
     Brick = 5
     def __str__(self):
         return self.name
+    __repr__ = __str__
 
 class Strategies(Enum):
     Dummy = 1
@@ -154,5 +155,8 @@ class Strategies(Enum):
     Road_Settlement_Ratio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
     Build_All = 5 #build as many times as possible every turn.
     Avoid_Shore_and_Desert = 6
-
     Adjust_Resource_Rates = 7 # not compatible with Avoid_Shore_and_Desert
+
+    def __str__(self):
+        return self.name
+    __repr__ = __str__

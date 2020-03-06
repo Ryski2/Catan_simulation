@@ -1,3 +1,7 @@
 *__pycache__
 *.vscode
+<<<<<<< HEAD
 *.exe
+=======
+*.exe
+>>>>>>> merging
