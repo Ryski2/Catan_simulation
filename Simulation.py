@@ -48,7 +48,7 @@ class Simulation:
                             self.discard_half(player1)
                             print("\t\t\tPlayer " + str(player1.id) + " had " + str(resources) + " resources and now has " + str(player1.total_resources()))
                         else:
-                            print("\t\t\tPlayer " + str(player1.id) + " has " + str(resources) + " resouces. No cards are discarded")
+                            print("\t\t\tPlayer " + str(player1.id) + " has " + str(resources) + " resources. No cards are discarded")
                     self.move_robber(player)
                     self.steal(player)
                 else:
@@ -63,15 +63,19 @@ class Simulation:
         strategies = player.strategies
         if Strategies.Trade in strategies:
             # trade with other players
-            for other in self.board.players:
-                if other is not player:
-                    player.trade_with_player(other)
+            for other_player in self.board.players:
+                if other_player is not player:
+                    max_res, min_res = player.get_max_min_resource()
+                    if max_res != min_res:
+                        if other_player.resources[max_res] < other_player.resources[min_res]:
+                            player.trade_with_player(other_player, max_res, min_res, 1, 1)
             # trade 4:1
-            player.trade_four_one()
+            max_res, min_res = player.get_max_min_resource()
+            if player.resources[max_res] > player.resources[min_res] + 4:
+                player.trade_four_one(max_res, min_res, 1)
+
 
         # Default strategy: no trading
-
-
 
     def build(self, player):
         owned_nodes = player.nodes;
@@ -82,14 +86,39 @@ class Simulation:
         else:
             buildable_nodes = player.buildable_nodes;
             buildable_edges = player.buildable_edges;
+        if self.board.turns == 0:
+            node_to_build = None
+            edge_to_build = None
+            while edge_to_build is None:
+                node_to_build = self.find_valid_settlement_location(player, buildable_nodes)
+                for edge in random.sample(node_to_build.edges, len(node_to_build.edges)):
+                    if edge is not None and edge.player is None:
+                        edge_to_build = edge
+                        break
+            self.board.build_road(player, edge_to_build)
+            self.board.build_settlement(player, node_to_build)
+        else:
+            if player.can_build_city():
+                #pick location to build
+                if len(player.settlements) != 0:
+                    city_node = random.sample(player.settlements, 1)[0]
+                    self.board.build_city(player, city_node)
+                else:
+                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found")
+                #print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
+            if player.can_build_settlement():
+                if len(buildable_nodes) != 0:
+                    settlement_node = self.find_valid_settlement_location(player, buildable_nodes)
+                    self.board.build_settlement(player, settlement_node)
+                else:
+                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a settlement but no valid location was found")
+            if player.can_build_road() and len(player.buildable_nodes) == 0: #####
+                if len(buildable_edges) != 0:
+                    rode_edge = self.find_valid_road_location(player, buildable_edges)
+                    self.board.build_road(player, rode_edge)
+                else:
+                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found")
 
-        strategies = player.strategies
-        if Strategies.Dummy in strategies:
-            """ADD STRATEGIES HERE"""
-            raise NotImplementedError()
-
-        else: # Default strategy
-            self.build_default(player, owned_nodes, owned_edges, buildable_nodes, buildable_edges)
 
     # defauld building strategy
     def build_default(self, player, owned_nodes, owned_edges, buildable_nodes, buildable_edges):
@@ -125,6 +154,50 @@ class Simulation:
                     self.board.build_road(player, rode_edge)
                 else:
                     print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found")
+
+    def find_valid_settlement_location(self, player, buildable_nodes):
+        strategies = player.strategies
+        if Strategies.Avoid_Shore_and_Desert in strategies:
+            node_choices = [None] * 3
+            for node in random.sample(buildable_nodes, len(buildable_nodes)):
+                valid_tile_count = 0 # 0 <= valid_tile_count <= 3
+                for tile in node.resources:
+                    if tile.resource is not Resource.Desert:
+                        valid_tile_count += 1
+                if valid_tile_count == 3:
+                    return node
+                elif node_choices[valid_tile_count] is None:
+                    node_choices[valid_tile_count] = node
+            for node in reversed(node_choices):
+                if node is not None:
+                    return node
+        else: # default strategy
+            return random.sample(buildable_nodes, 1)[0]
+
+    def find_valid_road_location(self, player, buildable_edges):
+        strategies = player.strategies
+        if Strategies.Avoid_Shore_and_Desert in strategies:
+            edge_choices = [None] * 3
+            for edge in random.sample(buildable_edges, len(buildable_edges)):
+                new_node = edge.node1
+                for neighbor_edge in edge.node1.edges:
+                    if neighbor_edge is not None and neighbor_edge.player is player:
+                        new_node = edge.node1
+                valid_tile_count = 0
+                for tile in new_node.resources:
+                    if tile.resource is not Resource.Desert:
+                        valid_tile_count += 1
+                if valid_tile_count == 3:
+                    return edge
+                elif edge_choices[valid_tile_count] is None:
+                    edge_choices[valid_tile_count] = edge
+            for edge in reversed(edge_choices):
+                if edge is not None:
+                    return edge
+
+
+        else:
+            return random.sample(buildable_edges, 1)[0]
 
     def discard_half(self, player):
         strategies = player.strategies
@@ -211,3 +284,7 @@ class Simulation:
                     winners.append(player.id)
             print("Player(s) " + ", ".join(str(p) for p in winners) + " had the most points, with " + str(highest_score) + " points")
         print()
+        for player in self.board.players:
+            print("Player " + str(player.id))
+            for resource in player.resources:
+                print("\t" + str(resource)+ ": " + str(player.resources[resource]))

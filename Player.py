@@ -1,6 +1,7 @@
 from enum import Enum
 import math
 import random
+import sys
 
 #for storing player states
 class Player:
@@ -72,22 +73,23 @@ class Player:
 
     # TRADING
     # trade most-had resource for least-had resource
-    def trade_with_player(self, other):
-        max_res, min_res = self.__get_max_min_resource()
-        if max_res != min_res:
-            if other.resources[max_res] < other.resources[min_res]:
-                self.resources[max_res] -= 1
-                self.resources[min_res] += 1
-                other.resources[max_res] += 1
-                other.resources[min_res] -= 1
+    def trade_with_player(self, other, resource_out, resource_in, out_number, in_number):
+        if self.resources[resource_out] < out_number or other.resources[resource_in] < in_number:
+            sys.exit("trade_with_player: not enough resource to trade with player")
 
-    def trade_four_one(self):
-        max_res, min_res = self.__get_max_min_resource()
-        if self.resources[max_res] > self.resources[min_res] + 4:
-            self.resources[max_res] -= 4
-            self.resources[min_res] += 1
+        self.resources[resource_out] -= out_number
+        self.resources[resource_in] += in_number
+        other.resources[resource_out] += out_number
+        other.resources[resource_in] -= in_number
 
-    def __get_max_min_resource(self):
+    def trade_four_one(self, resource_out, resource_in, in_number):
+        if self.resources[resource_out] < in_number * 4:
+            sys.exit("trade_four_one: not enough resource to trade")
+        self.resources[resource_out] -= in_number * 4
+        self.resources[resource_in] += in_number
+
+
+    def get_max_min_resource(self):
         max_resource = None
         max_count = -math.inf
         min_resource = None
@@ -117,3 +119,4 @@ class Strategies(Enum):
     #Basic = 1
     Dummy = 1
     Trade = 2
+    Avoid_Shore_and_Desert = 3
