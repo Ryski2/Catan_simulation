@@ -2,6 +2,8 @@ from Board import Board
 from Connectors import BuildType
 from Player import Resource
 from Player import Strategies
+from Globals import v_print
+#import numpy as np
 import random
 import itertools
 
@@ -17,14 +19,18 @@ class Simulation:
         while self.board.turns <= max_turns and winner is None:
             winner = self.game_turn()
         self.print_results(winner)
+        points = [0] * 4
+        for player in self.board.players:
+            points[player.id - 1] = player.points()
+        return self.board.turns, points
 
     def game_turn(self):
         turns = self.board.turns
         if turns == 0:
-            print()
-            print("Players placing initial settlements and roads")
-            print("---------------------------------------------")
-            print()
+            v_print("", 2)
+            v_print("Players placing initial settlements and roads", 2)
+            v_print("---------------------------------------------", 2)
+            v_print("", 2)
             for player in self.board.players:
                 self.build(player);
             # on second placement, players get the resources bordering their settlement
@@ -33,33 +39,41 @@ class Simulation:
             for roll in range(1, 12):
                 if roll != 7:
                     self.board.distribute(roll)
-            print()
-            print("Moving on to main game section")
-            print("---------------------------------------------")
-            print()
+            v_print("", 2)
+            v_print("Moving on to main game section", 2)
+            v_print("---------------------------------------------", 2)
+            v_print("", 2)
         else:
-            print("Round " + str(self.board.turns))
+            v_print("Round " + str(self.board.turns), 2)
             for player in self.board.players:
-                print("\tPlayer " + str(player.id) + "'s Turn")
+                v_print("\tPlayer " + str(player.id) + "'s Turn", 2)
                 roll = self.board.dice_roll(player)
                 if roll == 7:
                     for player1 in self.board.players:
                         resources = player1.total_resources()
                         if player1.total_resources() > 7:
                             self.discard_half(player1)
-                            print("\t\t\tPlayer " + str(player1.id) + " had " + str(resources) + " resources and now has " + str(player1.total_resources()))
+                            v_print("\t\t\tPlayer " + str(player1.id) + " had " + str(resources) + " resources and now has " + str(player1.total_resources()), 4)
                         else:
-                            print("\t\t\tPlayer " + str(player1.id) + " has " + str(resources) + " resources. No cards are discarded")
+                            v_print("\t\t\tPlayer " + str(player1.id) + " has " + str(resources) + " resources. No cards are discarded", 4)
                     self.move_robber(player)
                     self.steal(player)
                 else:
                     self.board.distribute(roll)
                 self.trade(player)
                 if Strategies.Build_All in player.strategies:
-                    while player.can_build_city() \
-                            or player.can_build_settlement() and len(player.buildable_nodes) > 0 \
-                            or player.can_build_road() and len(player.buildable_edges) > 0:
+                    settlementCount = player.settlementCount
+                    cityCount = player.cityCount
+                    roadCount = player.roadCount
+                    count = 0
+                    while (settlementCount != player.settlementCount) \
+                            or (cityCount != player.cityCount) \
+                            or (roadCount != player.roadCount) or count == 0:
+                        settlementCount = player.settlementCount
+                        cityCount = player.cityCount
+                        roadCount = player.roadCount
                         self.build(player)
+                        count += 1
                 else:
                     self.build(player)
                 if player.win():
@@ -125,7 +139,7 @@ class Simulation:
                     city_node = random.sample(player.settlements, 1)[0]
                     self.board.build_city(player, city_node)
                 else:
-                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found")
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a city but no valid location was found")
                 #print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
             if player.can_build_settlement():
                 if len(buildable_nodes) != 0:
@@ -145,9 +159,16 @@ class Simulation:
                     rode_edge = self.find_valid_road_location(player, buildable_edges)
                     self.board.build_road(player, rode_edge)
                 else:
-                    print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found")
+                    v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found", 3)
 
-
+    def build_road_or_not(self, player):
+        build_road = player.can_build_road()
+        if Strategies.Prioritize_Settlements in strategies:
+            build_road = build_road and len(player.buildable_nodes) == 0
+        if Strategies.Road_Settlement_Ratio in strategies:
+            road_settlement_ratio = strategies.get(Strategies.Road_Settlement_Ratio)
+            build_road = build_road and player.cityCount > player.roadCount / road_settlement_ratio
+        return build_road
 
     def find_valid_settlement_or_city_location(self, player, buildable_nodes):
         strategies = player.strategies
@@ -297,32 +318,32 @@ class Simulation:
         if stole_resource:
             other_player.resources[res] -= 1
             player.resources[res] += 1
-            print("\t\t\tPlayer " + str(player.id) + " stole one " + str(res) + " from Player " + str(other_player.id))
+            v_print("\t\t\tPlayer " + str(player.id) + " stole one " + str(res) + " from Player " + str(other_player.id), 4)
         else:
-            print("\t\t\tNo resource to steal")
+            v_print("\t\t\tNo resource to steal", 4)
 
     def print_results(self, winner):
-        print("Game Ended")
-        print("---------------------------------------------")
+        v_print("Game Ended", 2)
+        v_print("---------------------------------------------", 2)
         for player in self.board.players:
             #print every players settlements, roads, and cities
-            print("Player " + str(player.id) + ": ")
-            print("\tSettlement Locations:")
+            v_print("Player " + str(player.id) + ": ", 2)
+            v_print("\tSettlement Locations:", 2)
             for node in player.nodes:
                 if node.type == BuildType.Settlement:
-                    print("\t\t" + node.get_coords())
-            print("\tCity Locations:")
+                    v_print("\t\t" + node.get_coords(), 2)
+            v_print("\tCity Locations:", 2)
             for node in player.nodes:
                 if node.type == BuildType.City:
-                    print("\t\t" + node.get_coords())
-            print("\tEdge Between:")
+                    v_print("\t\t" + node.get_coords(), 2)
+            v_print("\tEdge Between:", 2)
             for edge in player.edges:
-                print("\t\t" + edge.node1.get_coords() + " to " + edge.node2.get_coords())
+                v_print("\t\t" + edge.node1.get_coords() + " to " + edge.node2.get_coords(), 2)
 
         if winner is not None:
-            print("Player " + str(winner.id) + " Won After " + str(self.board.turns) + " Turns")
+            v_print("Player " + str(winner.id) + " Won After " + str(self.board.turns) + " Turns", 1)
         else:
-            print("After " + str(max_turns) + " turns, no one has reached 10 points")
+            v_print("After " + str(max_turns) + " turns, no one has reached 10 points", 1)
             highest_score = -1
             for player in self.board.players:
                 if player.points() >= highest_score:
@@ -331,9 +352,9 @@ class Simulation:
             for player in self.board.players:
                 if player.points() == highest_score:
                     winners.append(player.id)
-            print("Player(s) " + ", ".join(str(p) for p in winners) + " had the most points, with " + str(highest_score) + " points")
-        print()
+            v_print("Player(s) " + ", ".join(str(p) for p in winners) + " had the most points, with " + str(highest_score) + " points", 1)
+        v_print("", 1)
         for player in self.board.players:
-            print("Player " + str(player.id))
+            v_print("Player " + str(player.id), 2)
             for resource in player.resources:
-                print("\t" + str(resource)+ ": " + str(player.resources[resource]))
+                v_print("\t" + str(resource)+ ": " + str(player.resources[resource]), 2)

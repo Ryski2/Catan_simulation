@@ -1,5 +1,6 @@
 from Simulation import *
 from Player import Strategies
+from Globals import v_print
 import random
 import sys
 
@@ -13,7 +14,7 @@ print("Seed: " + str(seed))
 # Multiple stratgies can coexist.
 # For example, a building strategy and a trading strategy don't comflict
 resource_rates = [0, 1, 1, 1, 1, 1]
-strat = {Strategies.Road_Settlement_Ratio : 4}
+strat = {Strategies.Build_All : None, Strategies.Road_Settlement_Ratio : 4, Strategies.Adjust_Resource_Rates: [resource_rates, 1]}
 strats = [strat] * 4
 sim = Simulation(strats, "basic")
 sim.run()

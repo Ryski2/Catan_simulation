@@ -1,4 +1,5 @@
 from enum import Enum
+from Globals import v_print
 
 # For settlements, cities
 class Node:

@@ -1,5 +1,6 @@
 from Connectors import *
 from Player import *
+from Globals import v_print
 import random
 import itertools
 
@@ -25,7 +26,7 @@ class Board:
 
     def dice_roll(self, player):
         roll = random.randint(1,6) + random.randint(1,6)
-        print("\t\tRolled a " + str(roll))
+        v_print("\t\tRolled a " + str(roll), 2)
         return roll
 
     def distribute(self, roll): # new version
@@ -48,7 +49,7 @@ class Board:
         for node in [edge.node1, edge.node2]:
             if node in self.buildable_nodes:
                 player.buildable_nodes.add(node)
-        print("\t\tPlayer " + str(player.id) + " built a road from " + edge.node1.get_coords() + " to " + edge.node2.get_coords())
+        v_print("\t\tPlayer " + str(player.id) + " built a road from " + edge.node1.get_coords() + " to " + edge.node2.get_coords(), 3)
 
     # Build a settlement for player at node
     def build_settlement(self, player, node):
@@ -70,7 +71,7 @@ class Board:
         for tile in node.resources:
             if tile is not None:
                 player.resource_rates[tile.resource.value] += tile.chance
-        print("\t\tPlayer " + str(player.id) + " built a settlement at " + node.get_coords())
+        v_print("\t\tPlayer " + str(player.id) + " built a settlement at " + node.get_coords(), 3)
 
     # Replace a settlement of player with a city at node
     def build_city(self, player, node):
@@ -87,15 +88,13 @@ class Board:
         self.robber_tile.disabled = False
         self.robber_tile = new_robber_tile
         self.robber_tile.disabled = True
-        print("\t\t\tRobber was moved to tile " + str(self.layout.index(self.robber_tile)))
+        v_print("\t\t\tRobber was moved to tile " + str(self.layout.index(self.robber_tile)), 4)
 
     def setup(self, player_strategies, board_layout):
         for i in range(len(player_strategies)):
             player_id = i + 1
             self.players.append(Player(player_id, player_strategies[i]))
         self.players = random.sample(self.players, len(self.players))
-        for player in self.players:
-            print(player.id)
         if board_layout == 'random':
             resources = [Resource.Lumber, Resource.Wool, Resource.Grain] * 4 + [Resource.Brick, Resource.Ore] * 3 + [Resource.Desert]
             number_tokens = [2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12]
@@ -193,14 +192,14 @@ class Tile:
             if self.disabled:
                 for node in self.nodes:
                     if node.type == BuildType.Settlement:
-                        print("\t\t\tPlayer " + str(node.player.id) + " would have gotten 1 of resource " + str(self.resource) + " but the robber was placed on the tile")
+                        v_print("\t\t\tPlayer " + str(node.player.id) + " would have gotten 1 of resource " + str(self.resource) + " but the robber was placed on the tile", 4)
                     elif node.type == BuildType.City:
-                        print("\t\t\tPlayer " + str(node.player.id) + " would have gotten 2 of resource " + str(self.resource) + " but the robber was placed on the tile")
+                        v_print("\t\t\tPlayer " + str(node.player.id) + " would have gotten 2 of resource " + str(self.resource) + " but the robber was placed on the tile", 4)
             else:
                 for node in self.nodes:
                     if node.type == BuildType.Settlement:
-                        print("\t\t\tPlayer " + str(node.player.id) + " got 1 of resource " + str(self.resource))
+                        v_print("\t\t\tPlayer " + str(node.player.id) + " got 1 of resource " + str(self.resource), 4)
                         node.player.resources[self.resource] += 1
                     elif node.type == BuildType.City:
-                        print("\t\t\tPlayer " + str(node.player.id) + " got 2 of resource " + str(self.resource))
+                        v_print("\t\t\tPlayer " + str(node.player.id) + " got 2 of resource " + str(self.resource), 4)
                         node.player.resources[self.resource] += 2
