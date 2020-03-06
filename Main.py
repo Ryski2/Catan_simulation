@@ -12,22 +12,10 @@ from multiprocessing import Pool
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
-resource_rates = [0, 1, 1, 1, 1, 1]
-strat = {Strategies.Build_All : None, Strategies.Road_Settlement_Ratio : 4, Strategies.Adjust_Resource_Rates: [resource_rates, 1]}
+strat = {Strategies.Discard_Most_Abundant, Strategies.Steal_From_Most_Resources, Strategies.Robber_To_Opponent, Strategies.Avoid_Shore_and_Desert, Strategies.Trade}
 strats = [strat] * 4
-
-strat = {Strategies.Robber_To_Opponent, Strategies.Steal_From_Most_Resources, Strategies.Discard_Most_Abundant}
-strats = [strat] * 2 + [{None}] * 2
 random_order = True
 sims = 10000 
-
-"""
-# TEST IF PLAYER ORDER ADVANTAGE
-strat = {None}
-strats = [strat] * 4
-random_order = False
-sims = 4000000
-"""
 
 if sims > 1:
     G.print_level = 0

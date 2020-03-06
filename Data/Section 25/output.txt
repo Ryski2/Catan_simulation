@@ -1,0 +1,22 @@
+Turns:
+	Mean: [99.2946]
+	St. Dev.: [55.14862474]
+Wins
+	Count: [2633. 2686. 2643. 2681.]
+	Percent: [0.2633 0.2686 0.2643 0.2681]
+Points:
+	Mean: [5.2901 5.3243 5.3163 5.2923]
+	St. Dev.: [2.98645978 3.00807738 3.01739197 3.03530241]
+Roads:
+	Mean: [9.305  9.273  9.331  9.3588]
+	St. Dev.: [7.12774684 7.16021445 7.17736992 7.23778022]
+Settlements:
+	Mean: [2.7095 2.7399 2.6941 2.7193]
+	St. Dev.: [2.36412981 2.41612251 2.34826003 2.3513629 ]
+Cities:
+	Mean: [1.2903 1.2922 1.3111 1.2865]
+	St. Dev.: [1.43660221 1.43248705 1.44731365 1.44610434]
+Strategies Used: [{Robber_To_Opponent, Steal_From_Most_Resources, Discard_Most_Abundant}, {Robber_To_Opponent, Steal_From_Most_Resources, Discard_Most_Abundant}, {Robber_To_Opponent, Steal_From_Most_Resources, Discard_Most_Abundant}, {Robber_To_Opponent, Steal_From_Most_Resources, Discard_Most_Abundant}]
+Random Player Order: True
+Total Elapsed: 0:00:42.213463
+
