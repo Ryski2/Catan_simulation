@@ -61,10 +61,12 @@ class Simulation:
                     self.board.distribute(roll)
                 self.trade(player)
                 if Strategies.Build_All in player.strategies:
-                    while player.can_build_city() \
+                    built = True
+                    while (player.can_build_city() \
                             or player.can_build_settlement() and len(player.buildable_nodes) > 0 \
-                            or player.can_build_road() and len(player.buildable_edges) > 0:
-                        self.build(player)
+                            or player.can_build_road() and len(player.buildable_edges) > 0) \
+                            and built:
+                        built = self.build(player)
                 else:
                     self.build(player)
                 if player.win():
@@ -109,17 +111,19 @@ class Simulation:
         else:
             strategies = player.strategies
             if Strategies.Prioritize_Settlements in strategies:
-                self.build_default(player, owned_nodes, owned_edges, buildable_nodes, buildable_edges, True)
+                return self.build_default(player, owned_nodes, owned_edges, buildable_nodes, buildable_edges, True)
             elif Strategies.Road_Settlement_Ratio in strategies:
-                self.build_default(player, owned_nodes, owned_edges, buildable_nodes, buildable_edges, False, player.build_ratio)
+                return self.build_default(player, owned_nodes, owned_edges, buildable_nodes, buildable_edges, False, player.build_ratio)
             else: # Default strategy
-                self.build_default(player, owned_nodes, owned_edges, buildable_nodes, buildable_edges)
+                return self.build_default(player, owned_nodes, owned_edges, buildable_nodes, buildable_edges)
 
     # default building strategy
     def build_default(self, player, owned_nodes, owned_edges, buildable_nodes, buildable_edges, prioritize_settlements = False, road_settlement_ratio = 0):
+        built = False
         if player.can_build_city():
             #pick location to build
             if len(player.settlements) != 0:
+                built = True
                 city_node = random.sample(player.settlements, 1)[0]
                 self.board.build_city(player, city_node)
             else:
@@ -127,18 +131,46 @@ class Simulation:
             #print("\t\tPlayer " + str(player.id) + " built a city at " + city_node.get_coords())
         if player.can_build_settlement():
             if len(buildable_nodes) != 0:
-                settlement_node = random.sample(buildable_nodes, 1)[0]
+                built = True
+                settlement_node = None
+                if Strategies.Build_High_Probability_Tiles in player.strategies:
+                    roll_probs = {
+                        2: 1,
+                        3: 2,
+                        4: 3,
+                        5: 4,
+                        6: 5,
+                        7: 6,
+                        8: 5,
+                        9: 4,
+                        10: 3,
+                        11: 2,
+                        12: 1
+                    }
+                    max_prob = 0
+                    for node in buildable_nodes:
+                        prob = 0
+                        for tile in node.resources:
+                            prob += roll_probs[tile.value]
+                        if prob > max_prob:
+                            max_prob = prob
+                            settlement_node = node
+                else:
+                    settlement_node = random.sample(buildable_nodes, 1)[0]
                 self.board.build_settlement(player, settlement_node)
             else:
                 v_print("\t\tPlayer " + str(player.id) + " had resources to build a settlement but no valid location was found", 3)
         if player.can_build_road() \
-            and (len(player.buildable_nodes) == 0 if prioritize_settlements else True) \
-            and (player.settlementCount + player.cityCount > player.roadCount / road_settlement_ratio if road_settlement_ratio != 0 else True): #####
+                and (len(player.buildable_nodes) == 0 if prioritize_settlements else True) \
+                and (player.settlementCount + player.cityCount > player.roadCount / road_settlement_ratio if road_settlement_ratio != 0 else True): #####
             if len(buildable_edges) != 0:
+                built = True
                 rode_edge = random.sample(buildable_edges, 1)[0]
                 self.board.build_road(player, rode_edge)
             else:
                 v_print("\t\tPlayer " + str(player.id) + " had resources to build a road but no valid location was found", 3)
+        return built
+
 
     def find_valid_settlement_location(self, player, buildable_nodes):
         strategies = player.strategies

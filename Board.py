@@ -1,5 +1,5 @@
 from Connectors import *
-from Player import *
+from Player import Player, Resource
 from Globals import v_print
 import random
 import itertools
@@ -138,7 +138,7 @@ class Board:
 
             for i in range(6):
                 j = (i + 1) % 6
-                edge_keys[i] = (node_keys[i][0] + node_keys[j][0], node_keys[i][1] + node_keys[j][0]);
+                edge_keys[i] = (node_keys[i][0] + node_keys[j][0], node_keys[i][1] + node_keys[j][0])
                 node = None
                 if (node_keys[i] not in nodes_dict):
                     node = Node(set(), [None] * 3, node_keys[i][0], node_keys[i][1])

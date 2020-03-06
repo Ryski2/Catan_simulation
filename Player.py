@@ -151,6 +151,7 @@ class Resource(Enum):
     Brick = 5
     def __str__(self):
         return self.name
+    __repr__ = __str__
 
 class Strategies(Enum):
     #Basic = 1
@@ -160,3 +161,8 @@ class Strategies(Enum):
     Road_Settlement_Ratio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
     Avoid_Shore_and_Desert = 5
     Build_All = 6 #build as many times as possible every turn.
+    Build_High_Probability_Tiles = 7
+
+    def __str__(self):
+        return self.name
+    __repr__ = __str__
