@@ -6,6 +6,7 @@ from Globals import v_print
 import numpy as np
 import random
 import itertools
+import operator
 
 max_turns = 200
 
@@ -253,13 +254,20 @@ class Simulation:
 
     def discard_half(self, player):
         strategies = player.strategies
-        if Strategies.Dummy in strategies:
-            """ADD STRATEGIES HERE"""
-            raise NotImplementedError()
+        num_discards = player.total_resources() // 2
+        discarded = 0
+        if Strategies.Discard_Most_Abundant in strategies:
+            while (discarded < num_discards):
+                max_res_count = max(player.resources.values())
+                max_resources = []
+                for res, cnt in player.resources.items():
+                    if cnt == max_res_count:
+                        max_resources.append(res)
+                discard_res = random.choice(max_resources)
+                player.resources[discard_res] -= 1
+                discarded += 1
 
         else: # Default strategy
-            num_discards = player.total_resources() // 2
-            discarded = 0
             while (discarded < num_discards):
                 res = Resource(random.randint(1,5))
                 if player.resources[res] > 0:
@@ -304,10 +312,17 @@ class Simulation:
         other_player = None
         res = None
         strategies = player.strategies
-        if Strategies.Dummy in strategies:
-            """ADD STRATEGIES HERE"""
-            raise NotImplementedError()
-
+        if Strategies.Steal_From_Most_Resources in strategies:
+            max_resources = 0
+            for node in self.board.robber_tile.nodes:
+                if node.player is not None and node.player.total_resources() > max_resources and node.player is not player:
+                    max_resources = node.player.total_resources()
+                    other_player = node.player
+            if other_player is not None:
+                while not stole_resource:
+                    res = Resource(random.randint(1, 5))
+                    if other_player.resources[res] > 0:
+                        stole_resource = True 
         else: # Default strategy
             for node in random.sample(self.board.robber_tile.nodes, 6):
                 other_player = node.player

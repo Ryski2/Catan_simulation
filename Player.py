@@ -149,7 +149,7 @@ class Resource(Enum):
     __repr__ = __str__
 
 class Strategies(Enum):
-    Dummy = 1
+    Discard_Most_Abundant = 1
     Trade = 2
     Prioritize_Settlements = 3 #if there is a place to build a settlement, don't build a road
     Road_Settlement_Ratio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
@@ -157,6 +157,7 @@ class Strategies(Enum):
     Avoid_Shore_and_Desert = 6
     Adjust_Resource_Rates = 7 # not compatible with Avoid_Shore_and_Desert
     Robber_To_Opponent = 8
+    Steal_From_Most_Resources = 9
 
     def __str__(self):
         return self.name

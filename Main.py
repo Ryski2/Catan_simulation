@@ -9,15 +9,17 @@ import datetime
 import os
 from os import path
 from multiprocessing import Pool
+from openpyxl import Workbook
+from openpyxl.styles import Alignment
 
 resource_rates = [0, 1, 1, 1, 1, 1]
 strat = {Strategies.Build_All : None, Strategies.Road_Settlement_Ratio : 4, Strategies.Adjust_Resource_Rates: [resource_rates, 1]}
 strats = [strat] * 4
 
-strat = {Strategies.Robber_To_Opponent, Strategies.Trade, Strategies.Avoid_Shore_and_Desert}
-strats = [strat] * 4
-random_order = False
-sims = 10000
+strat = {Strategies.Robber_To_Opponent, Strategies.Steal_From_Most_Resources, Strategies.Discard_Most_Abundant}
+strats = [strat] * 2 + [{None}] * 2
+random_order = True
+sims = 10000 
 
 """
 # TEST IF PLAYER ORDER ADVANTAGE
@@ -114,12 +116,36 @@ if __name__ == "__main__":
     output += "Random Player Order: " + str(random_order) + "\n"
     output += "Total Elapsed: " + str(datetime.timedelta(seconds=end - start)) + "\n"
 
-    summary = np.vstack((np.pad(turns, (0, 3), mode='constant'), wins, points, roads, settlements, cities))
-    np.savetxt("Data/summary.csv", summary, fmt="%f", delimiter=",")
+    summary = np.vstack((wins, points, roads, settlements, cities))
+    np.savetxt("Data/summary.csv", np.vstack((np.pad(turns, (0, 3), mode='constant'), summary)), fmt="%f", delimiter=",")
 
     print(output)
     with open("Data/output.txt", "w") as f:
         print(output, file=f)
+
+    wb = Workbook()
+    ws = wb.active
+    ws['A2'] = "Turns"
+    ws['A3'] = "Wins"
+    ws['A4'] = "Points"
+    ws['A5'] = "Roads"
+    ws['A6'] = "Settlements"
+    ws['A7'] = "Cities"
+    
+    ws.merge_cells('B2:E2')
+    ws['B2'].alignment = Alignment(horizontal='center')
+    ws['B2'] = turns[0]
+
+    data_cells = ws['B3':'E7']
+    for i, row in enumerate(data_cells):
+        for j, cell in enumerate(row):
+            if i == 0:
+                cell.value = int(summary[i, j])
+            else:
+                cell.value = float(summary[i, j])   
+
+
+    wb.save("Data/SummaryChart.xlsx")
 
     np.savetxt("Data/turns.csv", total_turns, fmt="%d", delimiter=",")
     np.savetxt("Data/wins.csv", total_turns, fmt="%d", delimiter=",")
