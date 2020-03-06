@@ -64,6 +64,9 @@ class Board:
             self.buildable_nodes.discard(node1)
             for player1 in self.players:
                 player1.buildable_nodes.discard(node1)
+        for tile in node.resources:
+            if tile is not None:
+                player.resource_rates[tile.resource.value] += tile.chance
         print("\t\tPlayer " + str(player.id) + " built a settlement at " + node.get_coords())
 
     # Replace a settlement of player with a city at node
@@ -73,6 +76,9 @@ class Board:
         player.build_city()
         node.type = BuildType.City
         player.settlements.discard(node)
+        for tile in node.resources:
+            if tile is not None:
+                player.resource_rates[tile.resource.value] += tile.chance
 
     def move_robber(self, new_robber_tile):
         self.robber_tile.disabled = False
@@ -158,6 +164,12 @@ class Tile:
         self.nodes = adj_nodes
         #if the robber is on the tile, disable it
         self.disabled = disabled
+        # chance of rolling the tile value
+        self.chance = 0
+        if value <= 7:
+            self.chance = value - 1
+        else:
+            self.chance = 13 - value
 
     def distribute(self, roll_value):
         if self.value == roll_value:
