@@ -11,10 +11,6 @@ class Simulation:
     def __init__(self, player_strategies = [None] * 4, board_layout = "random"):
         self.board = Board(player_strategies, board_layout)
 
-        # arbitrarily decided constants for Strategies.Avoid_Shore_and_Desert
-        self.ideal_ratio = [0, 1, 1, 1, 1, 1]
-        self.k = 1
-        #
 
     def run(self):
         winner = None
@@ -59,7 +55,13 @@ class Simulation:
                 else:
                     self.board.distribute(roll)
                 self.trade(player)
-                self.build(player)
+                if Strategies.Build_All in player.strategies:
+                    while player.can_build_city() \
+                            or player.can_build_settlement() and len(player.buildable_nodes) > 0 \
+                            or player.can_build_road() and len(player.buildable_edges) > 0:
+                        self.build(player)
+                else:
+                    self.build(player)
                 if player.win():
                     return player
         self.board.turns += 1
@@ -83,8 +85,9 @@ class Simulation:
         # Default strategy: no trading
 
     def build(self, player):
-        owned_nodes = player.nodes;
-        owned_edges = player.edges;
+        owned_nodes = player.nodes
+        owned_edges = player.edges
+        strategies = player.strategies
         if self.board.turns == 0:
             buildable_nodes = self.board.buildable_nodes;
             buildable_edges = self.board.buildable_edges;
@@ -131,7 +134,13 @@ class Simulation:
                 else:
                     print("\t\tPlayer " + str(player.id) + " had resources to bulid a settlement but no valid location was found")
             """
-            if player.can_build_road() and len(player.buildable_nodes) == 0: #####
+            build_road = player.can_build_road()
+            if Strategies.Prioritize_Settlements in strategies:
+                build_road = build_road and len(player.buildable_nodes) == 0
+            if Strategies.Road_Settlement_Ratio in strategies:
+                road_settlement_ratio = strategies.get(Strategies.Road_Settlement_Ratio)
+                build_road = build_road and player.cityCount > player.roadCount / road_settlement_ratio
+            if build_road:
                 if len(buildable_edges) != 0:
                     rode_edge = self.find_valid_road_location(player, buildable_edges)
                     self.board.build_road(player, rode_edge)
@@ -214,7 +223,9 @@ class Simulation:
 
     # function for Strategies.Adjust_Resource_Rates
     def __calculate_value_of_node(self, player, node):
-        ideal_ratio = self.ideal_ratio # assumed ideal ratio of resource rates
+        strategy_data = player.strategies.get(Strategies.Adjust_Resource_Rates)
+        ideal_ratio = strategy_data[0] # assumed ideal ratio of resource rates
+        k = strategy_data[1] # some arbtriary constant
         new_ratio = list.copy(player.resource_rates)
         # how good the new ratio agrees with the ideal ratio
         # the lower, the better
@@ -234,15 +245,7 @@ class Simulation:
             diff = ideal_ratio[i] - new_ratio[i] * normalizer
             ratio_value += diff * diff
         rate = rate / 36 # now rate becomes the expected nnmber of resources the player gets each round
-        value = rate * rate - self.k * ratio_value / 5 # here k is an arbtriary value
-        print(str(node.row) + " aaaaa " + str(node.column))
-        print(str(rate) + " : " + str(ratio_value / 5) + " : " + str(value))
-        for tile in node.resources:
-            if tile is not None:
-                print(str(tile.resource) + " cccc " + str(tile.chance))
-        if node.row == 7 and node.column == 3:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
+        value = rate * rate - k * ratio_value / 5 # here k is an arbtriary value
         return value
 
     def discard_half(self, player):

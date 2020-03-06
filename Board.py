@@ -5,8 +5,11 @@ import itertools
 
 class Board:
     # player_strategies = [1, None, None, None] means Player 1 uses strategy 1 while players 2 to 4 use the default strategy.
-    # board_layout = 'basic' generates the layout shown in basic_layout.jpg.
-    # board_layout = "random" would generate a random board layout.
+    # board_layout = 'basic' - layout shown in basic_layout.jpg
+    #                'random' - random board layout
+    #                'res_const' - one of each type of resource tile replaced by desert
+    #                'val_const' - one of 5, 6, 8, 9 replaced by 12
+
 
     def __init__(self, player_strategies, board_layout):
         self.layout = []
@@ -105,6 +108,20 @@ class Board:
             Resource.Brick, Resource.Wool, Resource.Wool, Resource.Ore, \
             Resource.Ore, Resource.Grain, Resource.Lumber]
             number_tokens = [11, 12, 9, 4, 6, 5, 10, 3, 11, 4, 8, 8, 10, 9, 3, 5, 2, 6]
+        elif board_layout == 'res_const':
+            resources = [Resource.Lumber, Resource.Wool, Resource.Grain, \
+            Resource.Desert, Resource.Ore, Resource.Brick, Resource.Wool, \
+            Resource.Desert, Resource.Lumber, Resource.Grain, Resource.Desert, Resource.Grain, \
+            Resource.Brick, Resource.Desert, Resource.Wool, Resource.Ore, \
+            Resource.Desert, Resource.Desert, Resource.Lumber]
+            number_tokens = [11, 12, 9, 4, 6, 5, 10, 3, 11, 4, 8, 8, 10, 9, 3, 5, 2, 6]
+        elif board_layout == 'val_const':
+            resources = [Resource.Lumber, Resource.Wool, Resource.Grain, \
+            Resource.Brick, Resource.Ore, Resource.Brick, Resource.Wool, \
+            Resource.Desert, Resource.Lumber, Resource.Grain, Resource.Lumber, Resource.Grain, \
+            Resource.Brick, Resource.Wool, Resource.Wool, Resource.Ore, \
+            Resource.Ore, Resource.Grain, Resource.Lumber]
+            number_tokens = [11, 12, 9, 4, 12, 5, 10, 3, 11, 4, 12, 8, 10, 12, 3, 12, 2, 6]
 
         edges_dict = {}
         nodes_dict = {}

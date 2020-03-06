@@ -123,8 +123,11 @@ class Resource(Enum):
         return self.name
 
 class Strategies(Enum):
-    #Basic = 1
     Dummy = 1
     Trade = 2
-    Avoid_Shore_and_Desert = 3
-    Adjust_Resource_Rates = 4 # not compatible with Avoid_Shore_and_Desert
+    Prioritize_Settlements = 3 #if there is a place to build a settlement, don't build a road
+    Road_Settlement_Ratio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
+    Build_All = 5 #build as many times as possible every turn.
+    Avoid_Shore_and_Desert = 6
+
+    Adjust_Resource_Rates = 7 # not compatible with Avoid_Shore_and_Desert
