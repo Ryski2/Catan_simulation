@@ -268,12 +268,33 @@ class Simulation:
 
     def move_robber(self, player):
         strategies = player.strategies
-        tiles = self.board.layout
-        other_tiles = tiles.remove(self.board.robber_tile)
+        tiles = self.board.layout.copy()
+        other_tiles = [x for x in tiles if x != self.board.robber_tile]
         if Strategies.Robber_To_Opponent in strategies:
+            new_robber_tile = None
+            max_prob = -100000
             for tile in other_tiles:
                 #sum weighted probabilities, using negative value if own settlement
-                pass
+                dice_prob = {
+                    2: 1,
+                    3: 2,
+                    4: 3,
+                    5: 4,
+                    6: 5,
+                    7: 6,
+                    8: 5,
+                    9: 4,
+                    10: 3,
+                    11: 2,
+                    12: 1,
+                }
+                prob = 0
+                for node in tile.nodes:
+                    prob += (-1 if node.player == player else 1) * (2 if node.type == BuildType.City else (1 if node.type == BuildType.Settlement else 0)) * dice_prob[tile.value]
+                if prob > max_prob:
+                    max_prob = prob
+                    new_robber_tile = tile
+            self.board.move_robber(new_robber_tile)
         else: # Default strategy
             self.board.move_robber(random.choice(other_tiles))
 

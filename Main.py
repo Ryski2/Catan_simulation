@@ -14,7 +14,7 @@ resource_rates = [0, 1, 1, 1, 1, 1]
 strat = {Strategies.Build_All : None, Strategies.Road_Settlement_Ratio : 4, Strategies.Adjust_Resource_Rates: [resource_rates, 1]}
 strats = [strat] * 4
 
-strat = {None}
+strat = {Strategies.Robber_To_Opponent, Strategies.Trade, Strategies.Avoid_Shore_and_Desert}
 strats = [strat] * 4
 random_order = False
 sims = 10000
