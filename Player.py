@@ -128,3 +128,4 @@ class Strategies(Enum):
     PrioritizeSettlements = 3 #if there is a place to build a settlement, don't build a road
     RoadSettlementRatio = 4 #don't build a road if the ratio of roads to settlements and cities exceeds a threshold
     Avoid_Shore_and_Desert = 5
+    Build_All = 6 #build as many times as possible every turn.
