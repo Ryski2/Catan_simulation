@@ -32,10 +32,10 @@ class Simulation:
             v_print("---------------------------------------------", 2)
             v_print("", 2)
             for player in self.board.players:
-                self.build(player);
+                self.build(player)
             # on second placement, players get the resources bordering their settlement
             for player in reversed(self.board.players):
-                self.build(player);
+                self.build(player)
             for roll in range(2, 13):
                 if roll != 7:
                     self.board.distribute(roll)
@@ -99,12 +99,10 @@ class Simulation:
         # Default strategy: no trading
 
     def build(self, player):
-        owned_nodes = player.nodes
-        owned_edges = player.edges
         strategies = player.strategies
         if self.board.turns == 0:
-            buildable_nodes = self.board.buildable_nodes;
-            buildable_edges = self.board.buildable_edges;
+            buildable_nodes = self.board.buildable_nodes
+            buildable_edges = self.board.buildable_edges
             node_to_build = None
             edge_to_build = None
             while edge_to_build is None:
@@ -116,8 +114,8 @@ class Simulation:
             self.board.build_road(player, edge_to_build)
             self.board.build_settlement(player, node_to_build)
         else:
-            buildable_nodes = player.buildable_nodes;
-            buildable_edges = player.buildable_edges;
+            buildable_nodes = player.buildable_nodes
+            buildable_edges = player.buildable_edges
             possible_cities = set()
             possible_settlements = set()
             if player.can_build_city():
@@ -144,16 +142,6 @@ class Simulation:
                     self.board.build_road(player, rode_edge)
                 else:
                     v_print("\t\tPlayer " + str(player.id) + " had resources to bulid a road but no valid location was found", 3)
-
-    def build_road_or_not(self, player):
-        build_road = player.can_build_road()
-        strategies = player.strategies
-        if Strategies.Prioritize_Settlements in strategies:
-            build_road = build_road and len(player.buildable_nodes) == 0
-        if Strategies.Road_Settlement_Ratio in strategies:
-            road_settlement_ratio = strategies.get(Strategies.Road_Settlement_Ratio)
-            build_road = build_road and player.cityCount > player.roadCount / road_settlement_ratio
-        return build_road
 
     def find_valid_settlement_or_city_location(self, player, buildable_nodes):
         strategies = player.strategies

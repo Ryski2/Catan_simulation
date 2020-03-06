@@ -8,6 +8,7 @@ import time
 import datetime
 import os
 from os import path
+from multiprocessing import Pool
 
 if not path.exists("Data"):
     os.mkdir("Data")
@@ -29,6 +30,7 @@ if os.path.exists("Data/turns.dat") or os.path.exists("Data/points.dat"):
 
 resource_rates = [0, 1, 1, 1, 1, 1]
 strat = {Strategies.Build_All : None, Strategies.Road_Settlement_Ratio : 4, Strategies.Adjust_Resource_Rates: [resource_rates, 1]}
+strat = {None}
 strats = [strat] * 4
 
 random_order = True
@@ -39,45 +41,45 @@ if sims > 1:
 else:
     G.print_level = 5
 
-total_turns = np.zeros((sims, 1))
-total_points = np.zeros((sims, 4))
+total_turns = np.zeros((sims, 1), dtype=np.uint8)
+total_points = np.zeros((sims, 4), dtype=np.uint8)
 bar_len = 50
 
-start = time.process_time()
-for i in range(0, sims):
-    #progress bar
-    if (i % 5 == 0):
-        equals = round(i / sims * bar_len)
-        spaces = bar_len - equals
-        print("\r[" + "=" * equals + " " * spaces + "]\t" + str(i) + "/" + str(sims) + "\t" + "{:.2f}".format(i * 100 / sims)+ "% Done\t\t", end="")
-    
+def simulation(_):
     seed = random.randrange(sys.maxsize)
     random.seed(seed)
     #print("Seed: " + str(seed))
     sim = Simulation(strats, "basic", random_order)
     turns, points = sim.run()
-    total_turns[i] = turns
-    total_points[i] = points
-    #print(str(turns) + " Turns")
-    #print(points)
-end = time.process_time()
-print("\r[" + "=" * bar_len + "]\t" + str(sims) + "/" + str(sims) + "\t" + "100% Done\t\t\t")
+    return (turns, points)
 
-print("Turns:")
-print("\tMean: " + str(np.mean(total_turns, 0)))
-print("\tSt. Dev.: " + str(np.std(total_turns, 0)))
-print("Points:")
-print("\tMean: " + str(np.mean(total_points, 0)))
-print("\tSt. Dev.: " + str(np.std(total_points, 0)))
-print("Strategies Used: " + str(strats))
-print("Random Player Order: " + str(random_order))
+if __name__ == "__main__":
+    start = time.perf_counter()
+    p = Pool(8)
+    for i, item in enumerate(p.imap_unordered(simulation, range(sims)), 0):
+        if (i % 5 == 0):
+            equals = round(i / sims * bar_len)
+            spaces = bar_len - equals
+            print("\r[" + "=" * equals + " " * spaces + "]\t" + str(i) + "/" + str(sims) + "\t" + "{:.2f}".format(i * 100 / sims)+ "% Done\t\t", end="")
+        total_turns[i] = item[0]
+        total_points[i] = item[1]
+    print("\r[" + "=" * bar_len + "]\t" + str(sims) + "/" + str(sims) + "\t" + "100% Done\t\t\t")
 
-print("Total Elapsed: " + str(datetime.timedelta(seconds=end - start)))
+    end = time.perf_counter()
 
-total_turns.tofile("Data/turns.dat")
-total_points.tofile("Data/points.dat")
+    print("Turns:")
+    print("\tMean: " + str(np.mean(total_turns, 0)))
+    print("\tSt. Dev.: " + str(np.std(total_turns, 0)))
+    print("Points:")
+    print("\tMean: " + str(np.mean(total_points, 0)))
+    print("\tSt. Dev.: " + str(np.std(total_points, 0)))
+    print("Strategies Used: " + str(strats))
+    print("Random Player Order: " + str(random_order))
 
-"""
-blockPrint()
-enablePrint()
-"""
+    print("Total Elapsed: " + str(datetime.timedelta(seconds=end - start)))
+
+    np.savetxt("Data/turns.csv", total_turns, fmt="%d", delimiter=",")
+    np.savetxt("Data/points.csv", total_points, fmt="%d", delimiter=",")
+
+    #total_turns = np.loadtxt("Data/turns.csv", dtype=np.unit8, delimiter=",")
+    #total_points = np.loadtxt("Data/points.csv", dtype=np.unit8, delimiter=",")
