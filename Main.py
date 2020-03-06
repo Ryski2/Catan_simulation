@@ -1,4 +1,4 @@
-from Simulation import *
+from Simulation import Simulation
 from Player import Strategies
 from Globals import v_print
 import numpy as np
@@ -12,13 +12,13 @@ import sys
 # For example, a building strategy and a trading strategy don't comflict
 #strats = [{Strategies.Trade}] + [set()] * 3
 strats = [{Strategies.Road_Settlement_Ratio}] * 4
-ratios = [2] * 4
+ratios = [1, 2, 3, 4]
 
 
-sims = 1
+sims = 200
 
 total_turns = 0
-total_points = [0, 0, 0, 0]
+total_points = np.zeros(4)
 
 for i in range(0, sims):
     if (i % 20 == 0):

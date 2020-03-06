@@ -10,7 +10,7 @@ import itertools
 max_turns = 200
 
 class Simulation:
-    def __init__(self, player_strategies = [None] * 4, board_layout = "random", build_ratios = [0] * 4):
+    def __init__(self, player_strategies, board_layout, build_ratios = [0] * 4):
         self.board = Board(player_strategies, board_layout, build_ratios)
 
     def run(self):
@@ -61,9 +61,9 @@ class Simulation:
                     self.board.distribute(roll)
                 self.trade(player)
                 if Strategies.Build_All in player.strategies:
-                    while player.can_build_city() and player.settlementCount > 0 \
-                        or player.can_build_settlement() and len(player.buildable_nodes) != 0 \
-                        or player.can_build_road() and len(player.buildable_edges) != 0:
+                    while player.can_build_city() \
+                            or player.can_build_settlement() and len(player.buildable_nodes) > 0 \
+                            or player.can_build_road() and len(player.buildable_edges) > 0:
                         self.build(player)
                 else:
                     self.build(player)

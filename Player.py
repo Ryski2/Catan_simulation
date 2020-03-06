@@ -1,4 +1,5 @@
 from enum import Enum
+from Globals import v_print
 import math
 import random
 import sys
@@ -83,16 +84,46 @@ class Player:
         if self.resources[resource_out] < out_number or other.resources[resource_in] < in_number:
             sys.exit("trade_with_player: not enough resource to trade with player")
 
+        v_print("Player " + str(self.id) + " Before - ", 4)
+        for resource in self.resources:
+                v_print("\t" + str(resource)+ ": " + str(self.resources[resource]), 4)
+        
+        v_print("Player " + str(other.id) + " Before - ", 4)
+        for resource in other.resources:
+                v_print("\t" + str(resource)+ ": " + str(other.resources[resource]), 4)
+
         self.resources[resource_out] -= out_number
         self.resources[resource_in] += in_number
         other.resources[resource_out] += out_number
         other.resources[resource_in] -= in_number
 
+        v_print("\t\t\tPlayer " + str(self.id) + " traded " + str(out_number) + " " + str(resource_out) + " for " + str(in_number) + " " + str(resource_in) + " with Player " + str(other.id), 4)
+        
+        v_print("Player " + str(self.id) + " After - ", 4)
+        for resource in self.resources:
+                v_print("\t" + str(resource)+ ": " + str(self.resources[resource]), 4)
+        
+        v_print("Player " + str(other.id) + " After - ", 4)
+        for resource in other.resources:
+                v_print("\t" + str(resource)+ ": " + str(other.resources[resource]), 4)
+
+
     def trade_four_one(self, resource_out, resource_in, in_number):
+        v_print("Player " + str(self.id) + " Before - ", 4)
+        for resource in self.resources:
+                v_print("\t" + str(resource)+ ": " + str(self.resources[resource]), 4)
+        
+
         if self.resources[resource_out] < in_number * 4:
             sys.exit("trade_four_one: not enough resource to trade")
         self.resources[resource_out] -= in_number * 4
         self.resources[resource_in] += in_number
+
+        v_print("\t\t\tPlayer " + str(self.id) + " traded " + str(in_number * 4) + " " + str(resource_out) + " for " + str(in_number) + " " + str(resource_in) + " with the Bank", 4)
+        
+        v_print("Player " + str(self.id) + " Before - ", 4)
+        for resource in self.resources:
+                v_print("\t" + str(resource)+ ": " + str(self.resources[resource]), 4)
 
 
     def get_max_min_resource(self):
