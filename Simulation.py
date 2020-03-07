@@ -239,7 +239,7 @@ class Simulation:
         for tile in node.resources:
             if tile is not None and tile.resource is not Resource.Desert:
                 new_ratio[tile.resource.value] += tile.chance
-                rate += tile.chance
+                rate += tile.chance * ideal_ratio[tile.resource.value]
         s = sum(new_ratio)
         if s == 0:
             return - float("inf")
@@ -247,9 +247,9 @@ class Simulation:
         ratio_value = 0 # Goodness of the current node. The smaller the value, the better the node.
         for i in range(1, 5): # ingore desert
             diff = ideal_ratio[i] - new_ratio[i] * normalizer
-            ratio_value += diff * diff
+            ratio_value += abs(diff)
         rate = rate / 36 # now rate becomes the expected nnmber of resources the player gets each round
-        value = rate * rate - k * ratio_value / 5 # here k is an arbtriary value
+        value = rate - k * ratio_value # here k is an arbtriary value
         return value
 
     def discard_half(self, player):
